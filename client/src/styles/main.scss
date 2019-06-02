@@ -1,0 +1,109 @@
+// ----------- Variables
+
+    // Colors
+    $light: #f5f5f5;
+    $light-contrast: #e2e2e2;
+    $dark: #181818;
+    $muted: #707284;
+    $baseline: #fff;
+    $accent: #445ed8;
+
+    // Fonts
+    $normal-font: 'Karla', sans-serif;
+
+// ----------- Mixins
+
+    // Cards
+
+    @mixin card-border($side: 0) {
+        @if $side != 0 {
+            border-#{$side}: 2px solid $light-contrast;
+        } @else {
+            border: 2px solid $light-contrast;
+        }
+    }
+    
+    // Fonts
+
+    @mixin normal-font-style {
+        color: $dark;
+        font-family: 'Karla', sans-serif;
+        font-size: 18px;
+    }
+
+    @mixin ul-reset {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+        display: flex;
+    }
+
+// ----------- Resets
+
+body, html {
+    margin: 0;
+    padding: 0;
+}
+
+// ----------- General
+
+body {
+    background-color: $light;
+    display: flex;
+    flex-direction: column;
+
+    @include normal-font-style;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: row;
+    flex: 1;
+}
+
+.content-container {
+    background-color: $baseline;
+    max-width: 900px;
+    margin: 15px 0;
+    padding: 20px;
+    border-radius: 4px;
+    flex: 1;
+
+    @include card-border;
+}
+
+// ----------- Header and Nav
+
+header.container {
+    background-color: $baseline;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+
+    @include card-border(bottom);
+}
+
+header #title {
+    font-weight: bold;
+    letter-spacing: -3px;
+    font-size: 40px;
+    color: $muted;
+    padding: 10px;
+}
+
+header nav ul {
+    @include ul-reset;
+
+    li {
+        color: $muted;
+        padding: 10px;
+        margin: 10px;
+        cursor: pointer;
+    }
+
+    li:hover {
+        color: $accent;
+    }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "anxiety-master-list",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/jeraldjuice/anxiety-master-list.git",
+  "author": "jeraldjuice <jj@jeraldjuice.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}
