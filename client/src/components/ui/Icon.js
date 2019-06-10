@@ -12,9 +12,9 @@ const getWeight = ({ solid, light }) => {
     return 'r';
 };
 
-const Icon = ({ icon, ...props }) => {
+const Icon = ({ icon, iconString = false, ...props }) => {
     return (
-        <i className={`fa${getWeight(props)} fa-${ icon }`}></i>
+        <i className={ iconString || `fa${getWeight(props)} fa-${ icon }`}></i>
     );
 };
 
