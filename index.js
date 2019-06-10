@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Endpoints
 app.use('/api/notes', notesRouter);
-app.use('/api/category', categoryRouter);
+app.use('/api/categories', categoryRouter);
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname+'/client/build/index.html'));

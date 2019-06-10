@@ -11,10 +11,12 @@ const FormButton = ( { onClick, name, ...additional } ) => {
     );
 };
 
-const FormField = ( { type, name, ...additional } ) => {
+const FormField = ( { type, name, value, ...additional } ) => {
     switch( type ) {
         case 'textarea':
-            return <textarea { ...additional } />;
+            return <textarea value={ value } { ...additional } />;
+        case 'text':
+            return <input type="text" value={ value } { ...additional } />;
         case 'button':
             return <FormButton name={ name } { ...additional } />;
     }
@@ -27,9 +29,9 @@ const AddCard = ( { fields, getFieldValue, handleFieldChange, generateClickHandl
                 { fields.map( ( { onClick, ...field } )  => (
                         <FormField 
                             key={ field.name } 
-                            onChange={ handleFieldChange( field.name ) } 
+                            onChange={ handleFieldChange( field.name ) }
+                            value={ getFieldValue( field.name ) }
                             { ...generateClickHandler( onClick ) }
-                            { ...getFieldValue( field.name ) } 
                             {...field} 
                         />
                     )
@@ -45,7 +47,7 @@ const enhance = compose(
     withState( 'dirty', 'setDirty', false ),
     withHandlers({
         getFieldValue: ( { formFields } ) => ( name ) => {
-            return formFields.hasOwnProperty( name ) ? { value: formFields[name] } : {};
+            return formFields.hasOwnProperty( name ) ? formFields[name] : '';
         },
         handleFieldChange: ( { formFields, setFormFields, dirty, setDirty } ) => name => ( { target: { value } } ) => {
             if ( ! dirty ) {
