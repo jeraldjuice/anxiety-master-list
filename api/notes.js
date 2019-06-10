@@ -5,7 +5,7 @@ const notesRouter = express.Router();
 
 notesRouter
     .get('/', (req,res) => {
-        Note.find({}, (err, notes) => {
+        Note.find({}).sort({created: 'desc'}).exec((err, notes) => {
             res.json(notes)
         });
     })

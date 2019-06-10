@@ -33,10 +33,10 @@ export function fetchNotes() {
     }
 }
 
-export function createNote( contents ) {
+export function createNote( data ) {
     return dispatch => {
         return appier
-            .post('notes/new', { contents })
+            .post('notes/new', data)
             .then( note =>  
                 dispatch({
                     type: RECEIVE_NOTES,
