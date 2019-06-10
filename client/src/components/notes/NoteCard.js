@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { compose, withState, withHandlers } from 'recompose';
 import moment from 'moment';
 import { Card, CardBody, CardStatus } from 'components/ui';
-import { deleteNote } from 'actions/data';
+import { deleteById } from 'actions/data';
 
 const CardOverlay = ( { deleteNote, closeOverlay } ) => {
     return (
@@ -58,7 +58,7 @@ const enhance = compose(
             toggleOverlay( !showOverlay );
         },
         deleteNote: ( { dispatch, toggleOverlay } ) => noteId => {
-            dispatch( deleteNote( noteId ) );
+            dispatch( deleteById( noteId, 'notes' ) );
             toggleOverlay( false );
         }
     })

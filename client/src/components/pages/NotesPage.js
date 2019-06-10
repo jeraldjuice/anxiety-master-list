@@ -4,12 +4,12 @@ import { connect } from 'react-redux';
 import { Page } from 'components/layout';
 import { Card, CardTitle, CardContainer, AddCard } from 'components/ui';
 import NoteCard from 'components/notes/NoteCard';
-import { fetchNotes, createNote } from 'actions/data';
+import { fetchData, createData } from 'actions/data';
 
 const NotesPage = ( { dispatch, notes = [], fetching } ) => {
     const fields = [
         { name: 'contents', type: 'textarea', placeholder: 'Whatcha thinking?' },
-        { name: 'Add', type: 'button', onClick: fields => dispatch(createNote(fields)) }
+        { name: 'Add', type: 'button', onClick: fields => dispatch( createData( fields , 'notes' ) ) }
     ];
 
     return (
@@ -37,10 +37,10 @@ const mapStateToProps = ( { data: { notes, fetching } } ) => {
 };
 
 const enhance = compose(
-    connect(mapStateToProps),
+    connect( mapStateToProps ),
     lifecycle({
         componentDidMount() {
-            this.props.dispatch(fetchNotes());
+            this.props.dispatch( fetchData( 'notes' ) );
         }
     })
 );
