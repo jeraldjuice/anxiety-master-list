@@ -46,3 +46,18 @@ export function createNote( contents ) {
             );
     }
 }
+
+export const REMOVE_NOTE = 'DATA.REMOVE_NOTE';
+
+export function deleteNote( noteId ) {
+    return dispatch => {
+        return appier
+            .post('notes/delete', { id: noteId })
+            .then( () =>  
+                dispatch({
+                    type: REMOVE_NOTE,
+                    noteId
+                })
+            );
+    }
+}
