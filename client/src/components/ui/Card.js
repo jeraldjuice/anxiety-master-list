@@ -66,13 +66,12 @@ export const CardContainer = ({ children }) => {
     );
 }
 
-const Card = ({ children, icon = false, className = '', toolbar = false, withHover = false, overlay }) => {
+const Card = ({ children, icon = false, className = '', toolbar = false, withHover = false }) => {
     return (
         <div className={ `card${withHover ? ' with-hover' : ''}` + ( className.length > 0 ? ' ' : '' ) + className }>
             { toolbar && <CardToolbar buttons={ toolbar } /> }
             { icon && <Icon { ...icon } /> }
             { children }
-            { overlay && overlay() }
         </div>
     );
 }

@@ -1,6 +1,7 @@
 import {
     START_FETCH,
-    RECEIVE_NOTES
+    RECEIVE_NOTES,
+    REMOVE_NOTE
 } from 'actions/data';
 
 const initialState = {
@@ -21,6 +22,12 @@ function data( state = initialState, action ) {
                 ...state,
                 fetching: false,
                 notes: additive ? [ ...state.notes, ...notes ] : notes
+            };
+        case REMOVE_NOTE:
+            const { noteId } = action;
+            return {
+                ...state,
+                notes: state.notes.filter( note => note._id !== noteId )
             };
         default:
             return state;
