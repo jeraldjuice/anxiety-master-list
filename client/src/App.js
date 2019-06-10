@@ -1,16 +1,25 @@
 import React from 'react';
-import { Header } from 'components/layout';
+import { createStore, applyMiddleware } from 'redux';
+import { BrowserRouter as Router } from 'react-router-dom';
+import thunk from 'redux-thunk';
+import { Provider } from 'react-redux';
+import logger from 'redux-logger';
+
+import { Header, PageContainer } from 'components/layout';
+import { ModalHandler } from 'components/modals';
+import reducer from 'reducers';
+
+const store = createStore(reducer, applyMiddleware(thunk, logger));
 
 function App() {
   return (
-    <div>
-      <Header />
-      <div className="container" id="main">
-        <div className="content-container" id="main-content">
-          Yo
-        </div>
-      </div>
-    </div>
+      <Provider store={store}>
+        <Router>
+          <ModalHandler />
+          <Header />
+          <PageContainer />
+        </Router>
+      </Provider>
   );
 }
 

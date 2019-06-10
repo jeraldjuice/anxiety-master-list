@@ -22,7 +22,7 @@
             border: 2px solid $light-contrast;
         }
     }
-    
+
     // Fonts
 
     @mixin normal-font-style {
@@ -36,6 +36,13 @@
         padding: 0;
         list-style-type: none;
         display: flex;
+    }
+
+    @mixin header-font-style {
+        font-weight: bold;
+        letter-spacing: -1px;
+        color: $muted;
+        margin-bottom: 20px;
     }
 
 // ----------- Resets
@@ -66,12 +73,13 @@ body {
 .content-container {
     background-color: $baseline;
     max-width: 900px;
-    margin: 15px 0;
     padding: 20px;
     border-radius: 4px;
     flex: 1;
+}
 
-    @include card-border;
+a:hover {
+    color: $accent;
 }
 
 // ----------- Header and Nav
@@ -96,14 +104,445 @@ header #title {
 header nav ul {
     @include ul-reset;
 
-    li {
+    li a {
         color: $muted;
         padding: 10px;
         margin: 10px;
-        cursor: pointer;
+        text-decoration: none;
     }
 
-    li:hover {
-        color: $accent;
+    a.current {
+        color: inherit;
     }
+}
+
+// ----------- Pages
+
+.page-header, .section-header {
+    @include header-font-style;
+}
+
+.page-header i {
+    margin-right: 10px;
+}
+
+section {
+    margin-bottom: 20px;
+}
+
+// ----------- Cards
+
+.card-container {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: -1%;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    min-width: 27%;
+    min-height: 100px;
+    padding: 15px;
+    background-color: white;
+    border-radius: 3px;
+    border: 1px solid #e7eaf5;
+    flex-wrap: wrap;
+    position: relative;
+    transition: all .2s ease;
+    cursor: pointer;
+    color: #353535;
+    margin: 1%;
+    flex: 1;
+
+    &.with-hover:hover { // Or maybe do this only if the card is the child of a link
+        transform: scale(1.1);
+    }
+}
+
+.category-title {
+    font-weight: bold;
+    font-size: 23px;
+
+    i {
+        margin-right: 15px;
+        background-color: #e6eaf5;
+        padding: 10px;
+        border-radius: 100%;
+    }
+}
+
+.card .status-icon {
+    color: gray;
+    background-color: #ebefff;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: 10px;
+    font-weight: bold;
+}
+
+.note.card {
+    i {
+        color: #cbd0e2;
+    }
+    
+    .card-body {
+        margin-top: 10px;
+        margin-bottom: 30px;
+        font-size: 15px;
+    }
+    
+    .card-status-bar {
+        color: #7c89b9;
+    }
+}
+
+.card-toolbar {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+.action-button {
+    text-align: center;
+    padding: 5px;
+    border-radius: 3px;
+    width: 25px;
+}
+
+.action-button:hover {
+    background-color: #7c89b9;
+}
+
+.note .action-button:hover i {
+    color: white;
+}
+
+.status-icon:before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: -42px;
+    top: 0;
+    border: 21px solid #ebefff;
+    border-left-color: transparent;
+    border-top-color: transparent;
+}
+
+.status-icon:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: -37px;
+    left: 0;
+    border: 18.5px solid #ebefff;
+    border-left-color: transparent;
+    border-top-color: transparent;
+}
+
+.card-status-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 15px;
+    font-size: 15px;
+}
+
+.card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    border-radius: 3px;
+    background-image: linear-gradient(45deg, #cbd0e2 25%, #e6e8f2 25%, #e6e8f2 50%, #cbd0e2 50%, #cbd0e2 75%, #e6e8f2 75%, #e6e8f2 100%);
+    background-size: 56.57px 56.57px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-overlay-content {
+    padding: 15px;
+    text-align: center;
+}
+
+.card-overlay-message {
+    margin-bottom: 15px;
+}
+
+button.danger {
+    background-color: #ff203f;
+    color: white;
+}
+
+button.outline {
+    background-color: transparent;
+    border: 1px solid #435ed8;
+    margin-left: 15px;
+}
+
+// ------- Task Rows
+
+.task-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin: 10px 0;
+    position: relative;
+}
+/* 
+.task-name {
+    
+}
+
+.task-parent {
+
+}
+
+.task-due {
+
+} */
+
+// ------- Card Variations
+
+.card.green {
+    background-color: #b5ecb5;
+    border: 1px solid #abe2ac;
+    color: #287b29;
+
+    .category-title i {
+        background-color: #c7f7c8;
+    }
+
+    .status-icon {
+        background-color: #c6f7c8;
+        color: #91d492;
+    }
+
+
+    .status-icon:before, .status-icon:after {
+        border-right-color: #c6f7c8;
+        border-bottom-color: #c6f7c8;
+    }
+}
+
+// -------- Category Info
+
+
+.category-info {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ddebff;
+    border-radius: 2px;
+}
+
+.category-info > .row {
+    padding: 10px;
+    border-radius: 2px;
+    display: flex;
+    flex-direction: row;
+}
+
+.category-info > .row .cell {
+    flex: 1;
+}
+
+.category-info > .row .cell-header {
+    max-width: 100px;
+    font-weight: bold;
+}
+
+.category-info > .row:nth-child(even) {
+    background-color: #f1f6fd;
+}
+
+.cell-stacked {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #ddebff;
+    margin-right: 10px;
+}
+
+.cell-stacked:last-child {
+    margin-right: 0;
+    border-right: none;
+}
+
+.stacked-header, .inline-header {
+    font-weight: bold;
+    color: #577db3;
+}
+
+.upcoming-container {
+    margin-top: 10px;
+}
+
+.upcoming-container .row {
+    display: flex;
+    flex-direction: row;
+}
+
+.upcoming-container .cell {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddebff;
+    border-right: none;
+    text-align: center;
+    border-radius: 2px;
+    background-color: white;
+}
+
+.upcoming-container .cell:last-child {
+    border-right: 1px solid #ddebff;
+}
+
+// ---------- ADD BUTTON
+
+div#add-button {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    background-color: #7c8ab9;
+    color: whitesmoke;
+    border-radius: 50% 0 0 0;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+div#add-button:hover {
+    background-color: #445ed8;
+}
+
+div#add-button i {
+    transition: all .2s ease;
+}
+
+div#add-button:hover i {
+    transform: scale(1.3);
+}
+
+// ---------- Modals
+
+.modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #eaefffd6;
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    background-color: white;
+    padding: 20px;
+    width: 100%;
+    max-width: 700px;
+    border-radius: 3px;
+    border: 1px solid #d3d8e6;
+    position: relative;
+}
+
+.modal-header {
+    margin-bottom: 20px;
+    color: $muted;
+    font-weight: bold;
+}
+
+.modal-footer {
+    margin-top: 20px;
+}
+
+.close-btn {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    color: $light-contrast;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: $accent;
+}
+
+// ------- Modal form
+
+.form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  input {
+    display: block;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-bottom: 3px solid $muted;
+    font-size: initial;
+    font-family: inherit;
+    transition: all .2s ease;
+    font-size: 18px;
+  }
+  
+  input:focus {
+    border-bottom: 3px solid $accent;
+    outline: none;
+    color: $accent;
+  }
+  
+  label {
+    color: $muted;
+  }
+  
+  button {
+      align-self: flex-end;
+      padding: 15px;
+      border: none;
+      border-radius: 3px;
+      font-size: inherit;
+      font-weight: bold;
+      cursor: pointer;
+      color: $accent;
+      transition: all .2s ease;
+  }
+  
+  button:hover {
+    transform: scale(1.2);
+  }
+
+  label {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+textarea {
+    padding: 10px;
+    border: 1px solid #d3d8e6;
+    border-radius: 2px;
+    font-size: inherit;
+    color: inherit;
+    font-family: inherit;
+    height: 200px;
+    margin-bottom: 10px;
+}
+
+textarea:focus {
+    outline: none;
+    border: 1px solid $accent;
 }

@@ -6,9 +6,19 @@
   "author": "jeraldjuice <jj@jeraldjuice.com>",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.17.1"
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mongodb": "^3.2.7",
+    "mongoose": "^5.5.13"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "nodemon index.js --exec babel-node --presets babel-preset-env"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.6",
+    "babel-preset-env": "^1.7.0",
+    "nodemon": "^1.19.1"
   }
 }
