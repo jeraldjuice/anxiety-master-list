@@ -1,6 +1,35 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
+import { appier } from 'utils';
 
-const Header = () => {
+const navLinks = [
+  {
+    url: '/',
+    label: 'Dashboard'
+  },
+  {
+    url: '/today/',
+    label: 'Today'
+  },
+  {
+    url: '/tasks/',
+    label: 'Tasks'
+  },
+  {
+    url: '/categories/',
+    label: 'Categories'
+  },
+  {
+    url: '/notes/',
+    label: 'Notes'
+  },
+  {
+    url: '/settings/',
+    label: 'Settings'
+  },
+];
+
+const Header = ({ match }) => {
     return (
         <header className="container">
         <div id="title">
@@ -8,21 +37,15 @@ const Header = () => {
         </div>
         <nav>
           <ul>
-            <li>
-              Dashboard
-            </li>
-            <li>
-              Today
-            </li>
-            <li>
-              Tasks
-            </li>
-            <li>
-              Categories
-            </li>
-            <li>
-              Settings
-            </li>
+            {
+              navLinks.map( link => {
+                return (
+                  <li key={ link.url }>
+                    <NavLink to={ link.url } exact activeClassName="current">{ link.label }</NavLink>
+                  </li>
+                );
+              } )
+            }
           </ul>
         </nav>
       </header>
