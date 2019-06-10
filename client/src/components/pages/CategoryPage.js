@@ -1,6 +1,9 @@
 import React from 'react';
+import { compose, lifecycle, } from 'recompose';
+import { connect } from 'react-redux';
 import { Page } from 'components/layout';
 import { Card, CardTitle, CardIconCorner, CardStatus, CardContainer } from 'components/ui';
+import { fetchData, createData } from 'actions/data';
 
 const categories = [
     {
@@ -62,4 +65,20 @@ const CategoryPage = () => {
     );
 };
 
-export default CategoryPage;
+const mapStateToProps = ( { data: { categories, fetching } } ) => {
+    return {
+        categories,
+        fetching
+    };
+};
+
+const enhance = compose(
+    connect( mapStateToProps ),
+    lifecycle({
+        componentDidMount() {
+            this.props.dispatch( fetchData( 'categories' ) );
+        }
+    })
+);
+
+export default enhance(CategoryPage);

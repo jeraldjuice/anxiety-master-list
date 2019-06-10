@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal, ModalHeader } from 'components/modals';
 import { connect } from 'react-redux';
 import { clearModals } from 'actions/ui';
-import { createNote } from 'actions/data';
+import { createData } from 'actions/data';
 import { compose, withState, withHandlers } from 'recompose';
 
 const AddNoteModal = ( { dispatch, handleField, noteContent, submitForm } ) => {
@@ -24,7 +24,7 @@ const enhance = compose(
     withState( 'noteContent', 'setContents', '' ),
     withHandlers({
         submitForm: ( { noteContent, dispatch } ) => () => {
-            dispatch( createNote( noteContent ) );
+            dispatch( createData( { contents: noteContent }, 'notes' ) );
             dispatch( clearModals() );
         },
         handleField: ( { setContents } ) => ( { target: { value } } ) => setContents( value )

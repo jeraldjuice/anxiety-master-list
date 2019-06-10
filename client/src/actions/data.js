@@ -8,55 +8,59 @@ export function startFetch() {
     };
 }
 
-export const RECEIVE_NOTES = 'DATA.RECEIVE_NOTES';
+export const RECEIVE_DATA = 'DATA.RECEIVE';
 
-export function receiveNotes(notes, additive = false) {
+export function receiveData( data ) {
     return {
-        type: RECEIVE_NOTES,
-        notes,
-        additive
+        type: RECEIVE_DATA,
+        data
     };
 }
 
-export function fetchNotes() {
+export function fetchData( dataType ) {
     return dispatch => {
-        dispatch(startFetch());
+        dispatch( startFetch() );
 
         return appier
-            .get('notes')
-            .then( notes =>  
+            .get( dataType )
+            .then( data =>  
                 dispatch({
-                    type: RECEIVE_NOTES,
-                    notes
+                    type: RECEIVE_DATA,
+                    data: { [ dataType ] : data }
                 })
             );
     }
 }
 
-export function createNote( data ) {
+export const RECEIVE_ONE = 'DATA.RECEIVE_ONE';
+
+export function receiveOne( data, dataType ) {
+    return {
+        type: RECEIVE_ONE,
+        data,
+        dataType
+    };
+}
+
+export function createData( properties, dataType ) {
     return dispatch => {
         return appier
-            .post('notes/new', data)
-            .then( note =>  
-                dispatch({
-                    type: RECEIVE_NOTES,
-                    notes: [ note ],
-                    additive: true
-                })
-            );
+            .post( `${ dataType }/new`, properties )
+            .then( data => dispatch( receiveOne( data, dataType ) ) );
     }
 }
 
-export const REMOVE_NOTE = 'DATA.REMOVE_NOTE';
+export const DELETE_BY_ID = 'DATA.DELETE_BY_ID';
 
-export function deleteNote( noteId ) {
+export function deleteById( id, dataType ) {
     return dispatch => {
         return appier
-            .post('notes/delete', { id: noteId })
+            .post( `${ dataType }/delete`, { id } )
             .then( () =>  
                 dispatch({
-                    type: REMOVE_NOTE,
-                    noteId
+                    type: DELETE_BY_ID,
+                    id,
+                    dataType
                 })
             );
     }

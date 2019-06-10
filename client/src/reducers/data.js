@@ -1,12 +1,14 @@
 import {
     START_FETCH,
-    RECEIVE_NOTES,
-    REMOVE_NOTE
+    RECEIVE_DATA,
+    RECEIVE_ONE,
+    DELETE_BY_ID
 } from 'actions/data';
 
 const initialState = {
     fetching: false,
     notes: [],
+    categories: []
 };
 
 function data( state = initialState, action ) {
@@ -16,18 +18,22 @@ function data( state = initialState, action ) {
                 ...state,
                 fetching: true,
             };
-        case RECEIVE_NOTES:
-            const { notes, additive } = action;
+        case RECEIVE_DATA:
             return {
                 ...state,
                 fetching: false,
-                notes: additive ? [ ...notes, ...state.notes ] : notes
+                ...action.data
             };
-        case REMOVE_NOTE:
-            const { noteId } = action;
+        case RECEIVE_ONE:
             return {
                 ...state,
-                notes: state.notes.filter( note => note._id !== noteId )
+                fetching: false,
+                [ action.dataType ]: [ action.data, ...state[ action.dataType ] ]
+            };
+        case DELETE_BY_ID:
+            return {
+                ...state,
+                [ action.dataType ]: state[ action.dataType ].filter( data => data._id !== action.id )
             };
         default:
             return state;

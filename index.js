@@ -3,6 +3,7 @@ import path from 'path';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import notesRouter from './api/notes';
+import categoryRouter from './api/categories';
 
 const app = express();
 
@@ -20,7 +21,10 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 app.use(express.static(path.join(__dirname, 'client/build')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Endpoints
 app.use('/api/notes', notesRouter);
+app.use('/api/category', categoryRouter);
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname+'/client/build/index.html'));
