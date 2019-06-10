@@ -21,7 +21,7 @@ function data( state = initialState, action ) {
             return {
                 ...state,
                 fetching: false,
-                notes: additive ? [ ...state.notes, ...notes ] : notes
+                notes: additive ? [ ...notes, ...state.notes ] : notes
             };
         case REMOVE_NOTE:
             const { noteId } = action;

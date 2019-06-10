@@ -1,6 +1,7 @@
 import Icon from './Icon';
 import Card, { CardTitle, CardStatus, CardCorner, CardIconCorner, CardContainer, CardBody } from './Card';
 import AddButton from './AddButton';
+import AddCard from './AddCard';
 
 export {
     Icon,
@@ -11,5 +12,6 @@ export {
     CardIconCorner,
     CardContainer,
     CardBody,
-    AddButton
+    AddButton,
+    AddCard
 };
