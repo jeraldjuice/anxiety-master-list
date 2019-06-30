@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import classNames from 'classnames';
 import moment from 'moment';
-import { compose, lifecycle } from 'recompose';
 import { useSelector, useDispatch } from 'react-redux';
 import { Page, PageSection, PageRow } from 'components/layout';
 import { CardContainer, IconButton } from 'components/ui';
@@ -51,9 +50,14 @@ const ThisWeek = ( { items } ) => {
 };
 
 const DashboardPage = () => {
+    const dispatch = useDispatch();
     const fetching = useSelector( getIsFetching );
     const categories = useSelector( getAllCategories );
     const items = useSelector( getAllItems );
+
+    useEffect( () => {
+        dispatch( fetchAll() );
+    } );
 
     return (
         <Page id="main-content" noHeader>
@@ -78,13 +82,4 @@ const DashboardPage = () => {
     );
 };
 
-const enhance = compose(
-    lifecycle({
-        componentDidMount() {
-            const { dispatch } = useDispatch();
-            dispatch( fetchAll() );
-        },
-    }),
-);
-
-export default enhance( DashboardPage );
+export default DashboardPage;

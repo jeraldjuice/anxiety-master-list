@@ -1,11 +1,8 @@
-import React from 'react';
-import { withState, withHandlers, compose } from 'recompose';
+import React, { useState } from 'react';
 import classNames from 'classnames';
 import DropdownField from './DropdownField';
 import DueDatePicker from './DueDatePicker';
 import IconPicker from './IconPicker';
-
-// @TODO this might need dispatch? Unsure
 
 const FormButton = ( { onClick, name, sm, invert, ...additional } ) => {
     return (
@@ -36,7 +33,44 @@ const FormField = ( { type, name, value, onChange, removeSelf, ...additional } )
     }
 };
 
-const Form = ( { className, fields, getFieldValue, removeFieldValue, handleFieldChange, generateClickHandler } ) => {
+const Form = ( { initValues = {}, className, fields  } ) => {
+    const [ formFields, setFormFields ] = useState( initValues );
+    const [ dirty, setDirty ] = useState( false );
+
+    const getFieldValue = name => {
+        return formFields.hasOwnProperty( name ) ? formFields[ name ] : '';
+    };
+
+    const handleFieldChange = name => value => {
+        if ( ! dirty ) {
+            setDirty( true );
+        }
+
+        setFormFields( {
+            ...formFields,
+            [ name ]: value,
+        } );
+    };
+
+    const generateClickHandler = ( onClick = false ) => {
+        return onClick ? {
+            onClick: () => {
+                onClick( formFields );
+                setFormFields({});
+                setDirty( false );
+            },
+        } : {};
+    };
+
+    const removeFieldValue = name => {
+        if ( formFields.hasOwnProperty( name ) ) {
+            setFormFields( {
+                ...formFields,
+                [ name ]: 'remove',
+            } );
+        }
+    };
+
     return (
         <div className={ classNames( "form", className ) }>
             { fields.map( ( { onClick, ...field } )  => (
@@ -54,41 +88,4 @@ const Form = ( { className, fields, getFieldValue, removeFieldValue, handleField
     );
 };
 
-const enhance = compose(
-    withState( 'formFields', 'setFormFields', ( { initValues = {} } ) => initValues ),
-    withState( 'dirty', 'setDirty', false ),
-    withHandlers({
-        getFieldValue: ( { formFields } ) => ( name ) => {
-            return formFields.hasOwnProperty( name ) ? formFields[ name ] : '';
-        },
-        handleFieldChange: ( { formFields, setFormFields, dirty, setDirty } ) => name => value => {
-            if ( ! dirty ) {
-                setDirty( true );
-            }
-
-            setFormFields( {
-                ...formFields,
-                [ name ]: value,
-            } );
-        },
-        generateClickHandler: ( { formFields, setFormFields, setDirty } ) => ( onClick = false ) => {
-            return onClick ? {
-                onClick: () => {
-                    onClick( formFields );
-                    setFormFields({});
-                    setDirty( false );
-                },
-            } : {};
-        },
-        removeFieldValue: ( { formFields, setFormFields } ) => name => {
-            if ( formFields.hasOwnProperty( name ) ) {
-                setFormFields( {
-                    ...formFields,
-                    [ name ]: 'remove',
-                } );
-            }
-        },
-    })
-);
-
-export default enhance( Form );
+export default Form;

@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { compose, lifecycle } from 'recompose';
 import { Page } from 'components/layout';
 import { Card, CardTitle, CardContainer, AddCard } from 'components/ui';
 import NoteCard from 'components/notes/NoteCard';
@@ -11,6 +10,10 @@ const NotesPage = () => {
     const dispatch = useDispatch();
     const notes = useSelector( getAllNotes );
     const fetching = useSelector( getIsFetching );
+
+    useEffect( () => {
+        dispatch( fetchData( 'notes' ) );
+    } );
 
     const fields = [
         { name: 'contents', type: 'textarea', placeholder: 'Whatcha thinking?' },
@@ -34,14 +37,4 @@ const NotesPage = () => {
     );
 };
 
-const enhance = compose(
-    lifecycle({
-        componentDidMount() {
-            const dispatch = useDispatch();
-            
-            dispatch( fetchData( 'notes' ) );
-        },
-    })
-);
-
-export default enhance(NotesPage);
+export default NotesPage;

@@ -1,5 +1,4 @@
-import React from 'react';
-import { compose, lifecycle } from 'recompose';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Page } from 'components/layout';
 import { Card, CardLink, CardTitle, CardIconCorner, CardStatus, CardContainer, AddCard } from 'components/ui';
@@ -10,6 +9,10 @@ const CategoryPage = () => {
     const dispatch = useDispatch();
     const fetching = useSelector( getIsFetching );
     const categories = useSelector( getAllCategories );
+
+    useEffect( () => {
+        dispatch( fetchData( 'categories' ) );
+    } );
 
     const fields = [
         { name: 'name', type: 'text', placeholder: 'Name' },
@@ -46,14 +49,4 @@ const CategoryPage = () => {
     );
 };
 
-const enhance = compose(
-    lifecycle({
-        componentDidMount() {
-            const dispatch = useDispatch();
-
-            dispatch( fetchData( 'categories' ) );
-        },
-    })
-);
-
-export default enhance(CategoryPage);
+export default CategoryPage;

@@ -1,7 +1,13 @@
-import React from 'react';
-import { withState, withHandlers, compose } from 'recompose';
+import React, { useState } from 'react';
 
-const DropdownField = ( { handleOptionClick, isOpen, setIsOpen, options, value } ) => {
+const DropdownField = ( { options, value, onChange } ) => {
+    const [ isOpen, setIsOpen ] = useState( false );
+
+    const handleOptionClick = value => {
+        onChange( value );
+        setIsOpen( false );
+    };
+
     const getLabel = () => {
         const possibleValue = options.find( opt => opt.value == value );
 
@@ -40,14 +46,4 @@ const DropdownField = ( { handleOptionClick, isOpen, setIsOpen, options, value }
     );
 };
 
-const enhance = compose(
-    withState( 'isOpen', 'setIsOpen', false ),
-    withHandlers({
-        handleOptionClick: ( { onChange, setIsOpen } ) => value => {
-            onChange( value );
-            setIsOpen( false );
-        }
-    })
-);
-
-export default enhance( DropdownField );
+export default DropdownField;
