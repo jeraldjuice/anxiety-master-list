@@ -27,7 +27,7 @@ const enhance = compose(
             dispatch( createData( { contents: noteContent }, 'notes' ) );
             dispatch( clearModals() );
         },
-        handleField: ( { setContents } ) => ( { target: { value } } ) => setContents( value )
+        handleField: ( { setContents } ) => ( { target: { value } } ) => setContents( value ),
     })
 );
 

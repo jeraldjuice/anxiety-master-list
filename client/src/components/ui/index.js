@@ -1,5 +1,5 @@
-import Icon from './Icon';
-import Card, { CardTitle, CardStatus, CardCorner, CardIconCorner, CardContainer, CardBody } from './Card';
+import Icon, { IconButton, LabeledIcon } from './Icon';
+import Card, { CardTitle, CardStatus, CardCorner, CardIconCorner, CardContainer, CardBody, CardLink } from './Card';
 import AddButton from './AddButton';
 import AddCard from './AddCard';
 
@@ -13,5 +13,8 @@ export {
     CardContainer,
     CardBody,
     AddButton,
-    AddCard
+    AddCard,
+    CardLink,
+    IconButton,
+    LabeledIcon,
 };

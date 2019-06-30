@@ -1,185 +1,94 @@
 import React from 'react';
-import { Page, PageSection } from 'components/layout';
-import { Card, CardTitle, CardIconCorner, CardStatus, CardContainer } from 'components/ui';
+import classNames from 'classnames';
 import moment from 'moment';
+import { compose, lifecycle } from 'recompose';
+import { connect } from 'react-redux';
+import { Page, PageSection, PageRow } from 'components/layout';
+import { CardContainer, IconButton } from 'components/ui';
+import ItemsSection from 'components/pages/sections/ItemsSection';
+import { fetchAll } from 'actions/data';
 
-let id = 4;
+const days = [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ];
 
-const categories = [
-    {
-        id: 1,
-        name: 'Money',
-        iconType: {
-            icon: 'credit-card',
-        },
-        status: 'okay',
-        upcoming: {
-            nextWeek: 3
-        }
-    },
-    {
-        id: 2,
-        name: 'Health',
-        iconType: {
-            icon: 'heartbeat',
-            solid: true,
-        },
-        status: 'okay',
-        upcoming: {
-            nextWeek: 3
-        }
-    },
-    {
-        id: 3,
-        name: 'Chores',
-        iconType: {
-            icon: 'spray-can',
-            solid: true,
-        },
-        status: 'okay',
-        upcoming: {
-            nextWeek: 3
-        }
-    }
-];
+const ThisWeek = ( { items } ) => {
+    const today = moment().day();
+    const thisWeek = moment().week();
 
-const newItem = (name, cat) => {
-    return {
-        name,
-        id: id++,
-        cat
-    };
-};
-
-const items = [
-    newItem('Dental Health', 2)
-];
-
-const getItem = id => items.find( item => item.id === id );
-
-const conditionTypes = {
-    date: 'date',
-    monthly: 'monthly',
-    weekly: 'weekly',
-    yearly: 'yearly',
-};
-
-const newDueCondition = {
-    [conditionTypes.date]: date => {
+    const itemsThisWeek = items.filter( item => item.status.due && moment( item.status.due ).week() === thisWeek );
+    const sortedItems = itemsThisWeek.reduce( ( acc, item ) => {
+        const dayKey = moment( item.status.due ).day();
         return {
-            date
-        };
-    },
-    [conditionTypes.monthly]: (dayOfMonth, multiplier = 1) => {
-        return {
-            dayOfMonth,
-            multiplier
-        };
-    },
-    [conditionTypes.weekly]: (dayOfWeek, multiplier = 1) => {
-        return {
-            dayOfWeek,
-            multiplier
-        };
-    },
-    [conditionTypes.yearly]: (dayOfMonth, monthNumber, multiplier = 1) => {
-        return {
-            dayOfMonth,
-            monthNumber,
-            multiplier
-        };
-    },
-};
-
-/*
-    DUE DATE CONDIITONS:
-
-    date
-        if date is equal to date
-    repeat monthly (can repeat by a number of months, ie every 3 months)
-        if day number is equal
-    repeat weekly (can repeat by a number of weeks, ie every 3 months)
-        if weekday is equal
-    repeat yearly 
-        if date is equal to date, minus year
-*/
-
-const newTask = (name, item, type, condition) => {
-    return {
-        id: id++,
-        name,
-        parent: item,
-        due: {
-            type,
-            condition
+            ...acc,
+            [ dayKey ]: [ item, ...( acc.hasOwnProperty( dayKey ) ? acc[ dayKey ] : [] ) ],
         }
-    };
-}
+    }, {} );
 
-const tasks = [
-    newTask('Make regular dental checkup', 4, conditionTypes.date, newDueCondition.date(moment()))
-];
-
-const DashboardPage = () => {
     return (
-        <Page id="main-content" header="Dashboard">
-            <PageSection header="Unsorted Tasks">
-                <CardContainer>
-                    { tasks.map(task => {
-                        return (
-                            <div className="task-row" key={task.id}>
-                                <div className="task-name">
-                                    { task.name }
-                                </div>
-                                <div className="task-parent">
-                                    { getItem( task.parent ).name }
-                                </div>
-                                <div className="task-due">
-                                    { task.due.condition.date.format("dddd, MMMM Do YYYY, h:mm:ss a") }
-                                </div>
+        <div className="week-container">
+            {
+                days.map( ( day, idx ) => {
+                    return (
+                        <div key={ day + idx } className={ classNames( 'day-container', { today: today === idx } ) }>
+                            <div className="day-label">
+                                { day }
                             </div>
-                        );
-                    }) }
-                </CardContainer>
-            </PageSection>
-            <PageSection header="Tasks">
-                <CardContainer>
-                    { tasks.map(task => {
-                        return (
-                            <div className="task-row" key={task.id}>
-                                <div className="task-name">
-                                    { task.name }
-                                </div>
-                                <div className="task-parent">
-                                    { getItem( task.parent ).name }
-                                </div>
-                                <div className="task-due">
-                                    { task.due.condition.date.format("dddd, MMMM Do YYYY, h:mm:ss a") }
-                                </div>
+                            <div className="task-dots">
+                                {
+                                    sortedItems.hasOwnProperty( idx ) && sortedItems[ idx ].map( i => {
+                                        return (
+                                            <div key={ `dot${i._id}` } className="task-dot"></div>
+                                        )
+                                    } )
+                                }
                             </div>
-                        );
-                    }) }
-                </CardContainer>
-            </PageSection>
-            <PageSection header="Categories">
-                <CardContainer>
-                    { categories.map(category => {
-                        return (
-                            <Card key={ category.id } withHover>
-                                <CardTitle icon={ category.iconType }>
-                                    {category.name}
-                                </CardTitle>
-                                <CardIconCorner icon={{ icon: 'thumbs-up' }} />
-                                <CardStatus>
-                                    {category.upcoming.nextWeek} tasks upcoming
-                                </CardStatus>
-                            </Card>
-                        );
-                    }) }
-                </CardContainer>
-            </PageSection>
+                        </div>
+                    );
+                } )
+            }
+        </div>
+    );
+};
+
+const DashboardPage = ( { categories, items } ) => {
+    return (
+        <Page id="main-content" noHeader>
+            <div className="planner-header">
+                <IconButton icon="angle-left" solid />
+                <div className="planner-day">
+                    { moment().format("MMMM Do") }
+                </div>
+                <IconButton icon="angle-right" solid />
+            </div>
+            <ThisWeek items={ items } />
+            <PageRow>
+                <PageSection header="Notes">
+                    
+                </PageSection>
+                <PageSection header="One-Offs">
+                    
+                </PageSection>
+            </PageRow>
+            <ItemsSection items={ items } />
         </Page>
     );
 };
 
-export default DashboardPage;
+const mapStateToProps = ( { data: { categories, items, fetching } } ) => {
+    return {
+        fetching,
+        categories,
+        items,
+    };
+};
+
+const enhance = compose(
+    connect( mapStateToProps ),
+    lifecycle({
+        componentDidMount() {
+            const { dispatch } = this.props;
+            dispatch( fetchAll() );
+        },
+    }),
+);
+
+export default enhance( DashboardPage );

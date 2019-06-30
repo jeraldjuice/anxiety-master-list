@@ -1,15 +1,55 @@
 // ----------- Variables
 
-    // Colors
-    $light: #f5f5f5;
-    $light-contrast: #e2e2e2;
-    $dark: #181818;
-    $muted: #707284;
+    // Colors Scales - each scale has light, light-contrast, medium, medium-muted, and dark
+
+    // Grays
+    $grays: (
+        "light": #f5f5f5,
+        "light-contrast": #e2e2e2,
+        "medium-muted": #707284,
+        "medium": #353535,
+        "dark": #181818, 
+    );
+
+    // Blues
+    $blues: (
+        "light": #f1f6fd,
+        "light-contrast": #ddebff,
+        "medium-muted": #5a71d8,
+        "medium": #445ed8,
+        "dark": #223380, 
+    );
+
+    // Color helper functions
+
+    @function gray( $tone: "medium" ) {
+        @return map-get( $grays, $tone );
+    }
+
+    @function blue( $tone: "medium" ) {
+        @return map-get( $blues, $tone );
+    }
+
     $baseline: #fff;
-    $accent: #445ed8;
+    $accent: blue();
+    $accentText: blue( "medium-muted" );
+    $danger: #ff203f;
+    $danger-dark: #d61e37;
 
     // Fonts
     $normal-font: 'Karla', sans-serif;
+
+    // Text Sizes
+    $text-very-small: 14px;
+    $text-small: 15px;
+    $text-normal: 18px;
+    $text-big: 25px;
+
+    // Borders
+    $neutral-border: 1px solid gray( "light-contrast" );
+
+    // Border Radius
+    $default-radius: 3px;
 
 // ----------- Mixins
 
@@ -17,18 +57,18 @@
 
     @mixin card-border($side: 0) {
         @if $side != 0 {
-            border-#{$side}: 2px solid $light-contrast;
+            border-#{$side}: 2px solid gray( "light-contrast" );
         } @else {
-            border: 2px solid $light-contrast;
+            border: 2px solid gray( "light-contrast" );
         }
     }
 
     // Fonts
 
     @mixin normal-font-style {
-        color: $dark;
+        color: gray( "dark" );
         font-family: 'Karla', sans-serif;
-        font-size: 18px;
+        font-size: $text-normal;
     }
 
     @mixin ul-reset {
@@ -41,8 +81,133 @@
     @mixin header-font-style {
         font-weight: bold;
         letter-spacing: -1px;
-        color: $muted;
+        color: gray( "medium-muted" );
         margin-bottom: 20px;
+    }
+
+    // No select
+
+    @mixin no-select {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    @mixin link-reset {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    // Animations
+
+    @mixin hover-scale-up {
+        transition: all .2s ease;
+        cursor: pointer;
+
+        &:hover {
+            transform: scale(1.1);
+        }
+    }
+
+    @mixin border-deco( $color, $edge-size, $axis ) {
+        content: '';
+        width: 0;
+        height: 0;
+        display: block;
+        position: absolute;
+        border: calc( #{$edge-size} / 2 ) solid $color;
+
+        border-left-color: transparent;
+        border-top-color: transparent;
+
+        #{$axis}: -#{$edge-size};
+
+        @if $axis == left {
+            top: 0;
+        } @else {
+            left: 0;
+        }
+    }
+
+    // @TODO only makes triangles right now, make more flexible in future if needed
+    // will have to update 'update-deco-color' too
+    @mixin before-after-deco( $color, $edge-size ) {
+        background-color: $color;
+        width: $edge-size;
+        height: $edge-size;
+        
+        // This can be positioned to the left or right (default: left)
+        &:before {
+            @include border-deco( $color, $edge-size, left );
+        }
+        
+        // This can be positioned to the top or bottom (default: top)
+        &:after {
+            @include border-deco( $color, $edge-size, top );
+        }
+    }
+
+    @mixin update-deco-color( $color ) {
+        background-color: $color;
+
+        &:after, &::before {
+            border-bottom-color: $color;
+            border-right-color: $color;
+        }
+    }
+
+    @mixin icon-after( $icon, $weight ) {
+        &:after {
+            content: $icon;
+            font-weight: $weight;
+            font-family: "Font Awesome 5 Pro";
+            float: right;
+            vertical-align: middle;
+            font-size: 22px;
+            color: gray( "medium-muted" );
+            margin-left: 10px;
+        }
+
+        &:hover:after {
+            color: blue( "medium-muted" );
+        }
+    }
+
+    // Positioning
+
+    @mixin center-children {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    @mixin edge-positioning( $y, $x, $pos: absolute ) {
+        position: $pos;
+
+        @if $y == top {
+            top: 0;
+        } @else if $y == bottom {
+            bottom: 0;
+        }
+
+        @if $x == left {
+            left: 0;
+        } @else if $x == right {
+            right: 0;
+        }
+    }
+
+    // Buttons
+
+    @mixin make-button( $no-scale: false ) {
+        cursor: pointer;
+
+        @include no-select;
+
+        @if not $no-scale {
+            @include hover-scale-up;
+        }
     }
 
 // ----------- Resets
@@ -55,11 +220,19 @@ body, html {
 // ----------- General
 
 body {
-    background-color: $light;
+    background-color: gray( "light" );
     display: flex;
     flex-direction: column;
 
     @include normal-font-style;
+}
+
+h1 i {
+    margin-right: 10px;
+}
+
+.accent {
+    color: blue();
 }
 
 .container {
@@ -82,6 +255,48 @@ a:hover {
     color: $accent;
 }
 
+// ----------- Fonts
+
+.small-text {
+    font-size: $text-small;
+}
+
+// ----------- Buttons
+
+button {
+    align-self: flex-end;
+    padding: 15px;
+    border: none;
+    border-radius: $default-radius;
+    font-size: inherit;
+    font-weight: bold;
+    color: $accent;
+
+    @include make-button;
+}
+
+button.danger {
+    background-color: $danger;
+    color: white;
+}
+
+button.outline {
+    background-color: transparent;
+    border: 1px solid blue();
+    margin-left: 15px;
+}
+
+button.sm {
+    font-size: $text-small;
+    padding: 5px;
+    margin-top: 10px;
+}
+
+button.invert {
+    background-color: blue();
+    color: white;
+}
+
 // ----------- Header and Nav
 
 header.container {
@@ -94,18 +309,17 @@ header.container {
 }
 
 header #title {
-    font-weight: bold;
-    letter-spacing: -3px;
     font-size: 40px;
-    color: $muted;
     padding: 10px;
+    text-transform: uppercase;
+    color: gray( "medium-muted" );
 }
 
 header nav ul {
     @include ul-reset;
 
     li a {
-        color: $muted;
+        color: gray( "medium-muted" );
         padding: 10px;
         margin: 10px;
         text-decoration: none;
@@ -120,10 +334,15 @@ header nav ul {
 
 .page-header, .section-header {
     @include header-font-style;
-}
 
-.page-header i {
-    margin-right: 10px;
+    &.big {
+        color: $accentText;
+        font-size: $text-big;
+    }
+
+    i {
+        margin-right: 10px;
+    }
 }
 
 section {
@@ -146,147 +365,162 @@ section {
     min-width: 27%;
     min-height: 100px;
     padding: 15px;
-    background-color: white;
+    background-color: $baseline;
     border-radius: 3px;
-    border: 1px solid #e7eaf5;
+    border: $neutral-border;
     flex-wrap: wrap;
     position: relative;
-    transition: all .2s ease;
-    cursor: pointer;
-    color: #353535;
+    color: gray();
     margin: 1%;
     flex: 1;
 
-    &.with-hover:hover { // Or maybe do this only if the card is the child of a link
-        transform: scale(1.1);
+    &.with-hover { // Or maybe do this only if the card is the child of a link
+        @include hover-scale-up;
     }
 }
 
-.category-title {
-    font-weight: bold;
-    font-size: 23px;
-
-    i {
-        margin-right: 15px;
-        background-color: #e6eaf5;
-        padding: 10px;
-        border-radius: 100%;
-    }
-}
-
-.card .status-icon {
-    color: gray;
-    background-color: #ebefff;
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    padding: 10px;
-    font-weight: bold;
-}
-
-.note.card {
-    i {
-        color: #cbd0e2;
-    }
-    
-    .card-body {
-        margin-top: 10px;
-        margin-bottom: 30px;
-        font-size: 15px;
-    }
-    
-    .card-status-bar {
-        color: #7c89b9;
-    }
-}
-
-.card-toolbar {
-    display: flex;
-    flex-direction: row;
-    position: absolute;
-    right: 10px;
-    top: 10px;
-}
-
-.action-button {
-    text-align: center;
-    padding: 5px;
-    border-radius: 3px;
-    width: 25px;
-}
-
-.action-button:hover {
-    background-color: #7c89b9;
-}
-
-.note .action-button:hover i {
-    color: white;
-}
-
-.status-icon:before {
-    content: '';
-    display: block;
-    position: absolute;
-    left: -42px;
-    top: 0;
-    border: 21px solid #ebefff;
-    border-left-color: transparent;
-    border-top-color: transparent;
-}
-
-.status-icon:after {
-    content: '';
-    display: block;
-    position: absolute;
-    top: -37px;
-    left: 0;
-    border: 18.5px solid #ebefff;
-    border-left-color: transparent;
-    border-top-color: transparent;
+a.card {
+    @include link-reset;
 }
 
 .card-status-bar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    padding: 15px;
-    font-size: 15px;
+    color: blue( "medium-muted" );
 }
 
-.card-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 999;
-    border-radius: 3px;
-    background-image: linear-gradient(45deg, #cbd0e2 25%, #e6e8f2 25%, #e6e8f2 50%, #cbd0e2 50%, #cbd0e2 75%, #e6e8f2 75%, #e6e8f2 100%);
-    background-size: 56.57px 56.57px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+    // --- Card Title
 
-.card-overlay-content {
-    padding: 15px;
-    text-align: center;
-}
+    .card-title {
+        font-weight: bold;
+        font-size: $text-big;
 
-.card-overlay-message {
-    margin-bottom: 15px;
-}
+        i {
+            margin-right: 15px;
+            padding: 10px;
+            color: blue( "medium-muted" );
+        }
+    }
 
-button.danger {
-    background-color: #ff203f;
-    color: white;
-}
+    // --- Card Icons
 
-button.outline {
-    background-color: transparent;
-    border: 1px solid #435ed8;
-    margin-left: 15px;
-}
+    .top-icon-card {
+        .card-body {
+            margin-top: 10px;
+            margin-bottom: 30px;
+        }
+
+        i.top-icon {
+            color: blue( "medium-muted" );
+        }
+    }
+
+    // --- Card Toolbar
+
+    .card-toolbar {
+        display: flex;
+        flex-direction: row;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+    }
+
+    .action-button {
+        text-align: center;
+        padding: 5px;
+        border-radius: $default-radius;
+        width: 25px;
+        cursor: pointer;
+        color: blue( "medium-muted" );
+    }
+
+    .action-button:hover {
+        background-color: blue( "medium-muted" );
+
+        i {
+            color: white;
+        }
+    }
+
+    // --- Card Status Icon
+
+    .status-icon {
+        color: blue( "medium-muted" );
+        font-weight: bold;
+
+        @include edge-positioning(bottom, right);
+        @include center-children;
+        @include before-after-deco(blue( "light-contrast" ), 42px);
+    }
+
+    .card-status-bar {
+        padding: 15px;
+        font-size: $text-small;
+
+        @include edge-positioning(bottom, left);
+    }
+
+    // --- Card Overlays
+
+    .card-overlay {
+        @include edge-positioning(top, left);
+        @include center-children;
+
+        width: 100%;
+        height: 100%;
+        z-index: 999;
+        border-radius: $default-radius;
+        background-image: linear-gradient(45deg, blue( "light" ) 25%, blue( "light-contrast" ) 25%, blue( "light-contrast" ) 50%, blue( "light" ) 50%, blue( "light" ) 75%, blue( "light-contrast" ) 75%, blue( "light-contrast" ) 100%);
+        background-size: 56.57px 56.57px;
+    }
+
+    .card-overlay-content {
+        padding: 15px;
+        text-align: center;
+    }
+
+    .card-overlay-toolbar {
+        margin-top: 15px;
+    }
+
+    .card-overlay-close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        color: blue( "medium-muted" );
+        
+        @include make-button();
+
+        &:hover {
+            color: blue();
+        }
+    }
+
+    // ------- Card Variations
+
+    .card.green {
+        background-color: #b5ecb5;
+        border: 1px solid #abe2ac;
+        color: #287b29;
+
+        .card-title i {
+            background-color: #c7f7c8;
+        }
+
+        .status-icon {
+            @include update-deco-color(#c6f7c8);
+            color: #91d492;
+        }
+    }
+
+    .status-1.expired {
+        background-color: blue( "light" );
+        border-color: blue( "medium-muted" );
+    
+        .status-icon {
+            color: white;
+    
+            @include update-deco-color( blue( "medium-muted" ) );
+        }
+    }
 
 // ------- Task Rows
 
@@ -310,42 +544,18 @@ button.outline {
 
 } */
 
-// ------- Card Variations
-
-.card.green {
-    background-color: #b5ecb5;
-    border: 1px solid #abe2ac;
-    color: #287b29;
-
-    .category-title i {
-        background-color: #c7f7c8;
-    }
-
-    .status-icon {
-        background-color: #c6f7c8;
-        color: #91d492;
-    }
-
-
-    .status-icon:before, .status-icon:after {
-        border-right-color: #c6f7c8;
-        border-bottom-color: #c6f7c8;
-    }
-}
-
 // -------- Category Info
-
 
 .category-info {
     display: flex;
     flex-direction: column;
-    border: 1px solid #ddebff;
-    border-radius: 2px;
+    border: 1px solid gray( "light-contrast" );
+    border-radius: $default-radius;
 }
 
 .category-info > .row {
     padding: 10px;
-    border-radius: 2px;
+    border-radius: $default-radius;
     display: flex;
     flex-direction: row;
 }
@@ -360,13 +570,13 @@ button.outline {
 }
 
 .category-info > .row:nth-child(even) {
-    background-color: #f1f6fd;
+    background-color: blue( "light" );
 }
 
 .cell-stacked {
     display: flex;
     flex-direction: column;
-    border-right: 1px solid #ddebff;
+    border-right: 1px solid gray( "light-contrast" );
     margin-right: 10px;
 }
 
@@ -377,7 +587,7 @@ button.outline {
 
 .stacked-header, .inline-header {
     font-weight: bold;
-    color: #577db3;
+    color: $accentText;
 }
 
 .upcoming-container {
@@ -392,7 +602,7 @@ button.outline {
 .upcoming-container .cell {
     flex: 1;
     padding: 10px;
-    border: 1px solid #ddebff;
+    border: 1px solid gray( "light-contrast" );
     border-right: none;
     text-align: center;
     border-radius: 2px;
@@ -400,30 +610,29 @@ button.outline {
 }
 
 .upcoming-container .cell:last-child {
-    border-right: 1px solid #ddebff;
+    border-right: 1px solid gray( "light-contrast" );
 }
 
 // ---------- ADD BUTTON
 
+// @TODO DEPRECATED, remove add button stuff
+
 div#add-button {
-    position: fixed;
-    right: 0;
-    bottom: 0;
+    @include edge-positioning(bottom, right, fixed);
+    @include center-children;
+
     width: 50px;
     height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     font-size: 30px;
-    background-color: #7c8ab9;
-    color: whitesmoke;
+    background-color: blue( "medium-muted" );
+    color: gray( "light" );
     border-radius: 50% 0 0 0;
     cursor: pointer;
     transition: all .2s ease;
 }
 
 div#add-button:hover {
-    background-color: #445ed8;
+    background-color: blue();
 }
 
 div#add-button i {
@@ -437,16 +646,13 @@ div#add-button:hover i {
 // ---------- Modals
 
 .modal-container {
-    position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     background-color: #eaefffd6;
     z-index: 999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
+    @include center-children;
+    @include edge-positioning(top, left, fixed);
 }
 
 .modal {
@@ -454,14 +660,14 @@ div#add-button:hover i {
     padding: 20px;
     width: 100%;
     max-width: 700px;
-    border-radius: 3px;
-    border: 1px solid #d3d8e6;
+    border-radius: $default-radius;
+    border: 1px solid gray( "light-contrast" );
     position: relative;
 }
 
 .modal-header {
     margin-bottom: 20px;
-    color: $muted;
+    color: gray( "medium-muted" );
     font-weight: bold;
 }
 
@@ -473,7 +679,7 @@ div#add-button:hover i {
     position: absolute;
     right: 20px;
     top: 20px;
-    color: $light-contrast;
+    color: gray( "light-contrast" );
     cursor: pointer;
 }
 
@@ -481,68 +687,642 @@ div#add-button:hover i {
     color: $accent;
 }
 
-// ------- Modal form
+// ------- Forms
 
 .form {
     display: flex;
     flex-direction: column;
-  }
+}
+
+label {
+    color: gray( "medium-muted" );
+    font-size: $text-small;
+    margin-bottom: 10px;
+}
   
-  input {
+input {
     display: block;
     padding: 10px;
     margin: 10px 0;
     border: none;
-    border-bottom: 3px solid $muted;
+    border-bottom: 3px solid gray( "medium-muted" );
     font-size: initial;
     font-family: inherit;
     transition: all .2s ease;
-    font-size: 18px;
-  }
-  
-  input:focus {
-    border-bottom: 3px solid $accent;
-    outline: none;
-    color: $accent;
-  }
-  
-  label {
-    color: $muted;
-  }
-  
-  button {
-      align-self: flex-end;
-      padding: 15px;
-      border: none;
-      border-radius: 3px;
-      font-size: inherit;
-      font-weight: bold;
-      cursor: pointer;
-      color: $accent;
-      transition: all .2s ease;
-  }
-  
-  button:hover {
-    transform: scale(1.2);
-  }
+    font-size: $text-normal;
 
-  label {
-    font-size: 14px;
-    margin-bottom: 10px;
+    &:focus {
+        border-bottom: 3px solid $accent;
+        outline: none;
+        color: $accent;
+    }
 }
 
 textarea {
     padding: 10px;
-    border: 1px solid #d3d8e6;
-    border-radius: 2px;
+    border: 1px solid gray( "light-contrast" );
+    border-radius: $default-radius;
     font-size: inherit;
     color: inherit;
     font-family: inherit;
     height: 200px;
     margin-bottom: 10px;
+
+    &:focus {
+        outline: none;
+        border: 1px solid $accent;
+    }
 }
 
-textarea:focus {
+    // --- Dropdowns
+
+    .dropdown-field {
+        position: relative;
+        outline: none;
+    }
+
+    .dropdown-label {
+        background-color: white;
+        border-radius: $default-radius;
+        text-align: left;
+        display: block;
+        padding: 10px;
+        margin: 10px 0;
+        border: none;
+        border-bottom: 3px solid gray( "medium-muted" );
+        font-size: initial;
+        font-family: inherit;
+        font-size: $text-normal;
+
+        @include make-button(true);
+        @include icon-after("\f107", 900);
+    }
+
+    .dropdown-options {
+        position: absolute;
+        width: 100%;
+        margin-top: -10px;
+        max-height: 200px;
+        overflow: scroll;
+        box-shadow: 0 3px 5px blue( "medium-muted" );
+    }
+
+    .dropdown-options .dropdown-label {
+        margin: 0;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 0;
+    }
+
+    .dropdown-options .dropdown-label.selected, .dropdown-options .dropdown-label:hover {
+        color: blue( "medium-muted" );
+    }
+
+    .dropdown-options .dropdown-label:after {
+        display: none;
+    }
+
+    // --- Pickers
+
+    .picker {
+        position: absolute;
+        background-color: white;
+        width: 250px;
+        height: 150px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+        box-shadow: 0 3px 3px #5971d859;
+        border-top: 5px solid blue( "light-contrast" );
+    
+        @include center-children;
+    }
+    
+    .picker:before {
+        display: block;
+        position: absolute;
+        content: '';
+        height: 0;
+        width: 0;
+        top: -30px;
+        left: calc(100%/2 - 15px);
+        border: 15px solid blue( "light-contrast" );
+        border-right-color: transparent;
+        border-left-color: transparent;
+        border-top-color: transparent;
+    }
+
+    .picker.invert {
+        background-color: blue( "light-contrast" );
+
+        &:before {
+            border-bottom-color: blue( "light-contrast" );
+        }
+    }
+
+    .picker-search input {
+        border: 2px solid blue( "light-contrast" );
+        font-size: 15px;
+        margin: 10px;
+        flex: 1;
+    }
+    
+    .picker-search {
+        flex: 1;
+        display: flex;
+    }
+
+    .picker-toggle {
+        display: inline-block;
+        font-size: $text-big;
+
+        @extend button;
+        margin-top: 0;
+    }
+
+    .picker-body {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        padding: 10px;
+        max-height: 160px;
+        overflow: scroll;
+    }
+    
+    .icon-btn {
+        padding: 2px;
+        margin: 3px;
+        background-color: white;
+        border-radius: $default-radius;
+        color: inherit;
+        font-size: $text-big;
+
+        @include make-button;
+    }
+
+    .icon-cat-label {
+        width: 100%;
+        display: block;
+        margin: 3px;
+        font-size: $text-small;
+    }
+
+.date-picker-field {
+    min-width: 250px;
     outline: none;
-    border: 1px solid $accent;
+    border: 2px solid #5971d8;
+    border-top: none;
+}
+
+.date-picker-bubbles {
+    padding: 10px;
+    border-radius: 0 5px 5px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.date-picker-field .bubble {
+    background-color: blue( "light" );
+    border-radius: $default-radius;
+    padding: 5px;
+    font-size: $text-very-small;
+    display: inline-block;
+    
+    @include make-button(true);
+}
+
+.date-picker-field .bubble:hover {
+    color: blue( "medium-muted" );
+}
+
+.bubble.repeat-bubble {
+    background-color: blue( "light-contrast" );
+    color: gray( "medium-muted" );
+}
+
+.bubble.repeat-bubble:hover {
+    color: #567db3;
+}
+
+.picker.repeat-picker {
+    width: auto;
+}
+
+.picker.repeat-picker:before {
+    left: 80%;
+}
+
+// DATE PICKER
+
+.date-picker {
+    flex-direction: column;
+}
+
+.month-picker > .dropdown-field > .dropdown-label {
+    padding: 5px;
+    font-size: $text-small;
+    margin: 0;
+    margin-top: 5px;
+    border: 1px solid gray( "light-contrast" );
+}
+
+.date-picker .dropdown-label:after {
+    font-size: $text-very-small;
+    line-height: $text-normal;
+}
+
+.date-picker .dropdown-field {
+    width: 100%;
+}
+
+.month {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 5px;
+}
+
+.day {
+    width: calc(100%/7 - 8px);
+    border: 1px solid gray( "light-contrast" );
+    margin: 1px;
+    padding: 2px;
+    font-size: $text-small;
+    font-weight: bold;
+    border-radius: $default-radius;
+    text-align: center;
+
+    @include make-button(true);
+}
+
+.day:not(.disabled):hover {
+    background-color: gray( "light-contrast" );
+}
+
+.day.disabled {
+    border-color: transparent;
+    color: gray( "light-contrast" );
+}
+
+.day.selected {
+    border: 1px solid gray( "medium-muted" );
+    background-color: gray( "medium-muted" );
+    color: white;
+}
+
+.day.today:not(.selected) {
+    background-color: blue( "light" );
+    color: gray( "medium-muted" );
+}
+
+.picker {
+    height: auto;
+}
+
+// REPEAT PICKER
+
+.repeat-type-container {
+    display: flex;
+    padding: 10px;
+}
+
+.repeat-type {
+    padding: 5px;
+    margin: 2px;
+    font-size: $text-very-small;
+    background-color: blue( "medium-muted" );
+    color: white;
+    border-radius: $default-radius;
+
+    @include make-button(true);
+}
+
+.repeat-type:hover {
+    background-color: blue();
+}
+
+.repeat-type.selected {
+    border: 1px solid blue( "medium-muted" );
+    background-color: transparent;
+    color: blue( "medium-muted" );
+}
+
+// LABEL FIELD
+
+
+.field-label {
+    font-size: $text-very-small;
+    text-align: left;
+    font-weight: bold;
+    color: #e6e8f2;
+    background-color: #6e7083;
+    padding: 2px 10px 0;
+    width: fit-content;
+    border-radius: $default-radius $default-radius 0 0;
+}
+
+// INLINE LABEL
+
+.inline-label {
+    color: blue( "light" ); 
+    font-size: $text-very-small;
+    align-self: center;
+    margin: 0 10px;
+}
+
+
+// --- BLOCKS
+
+.block-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: -5px;
+}
+
+.block {
+    position: relative;
+    background-color: blue( "medium-muted" );
+    border: 1px solid transparent;
+    color: white;
+    padding: 15px;
+    margin: 5px;
+
+    i {
+        margin-right: 15px;
+    }
+
+    @include make-button(true);
+}
+
+.when-tab {
+    background-color: white;
+    border: 1px solid #ddebff;
+    border-top: none;
+    color: #6f7184;
+    padding: 5px;
+    font-size: 14px;
+    margin: 15px -16px -16px;
+}
+
+.when-tab i {
+    margin-right: 8px;
+    font-size: 18px;
+    vertical-align: sub;
+}
+
+.block.danger {
+    background-color: $danger;
+}
+
+.block.muted {
+    background-color: gray( "medium-muted" );
+}
+
+.block.today {
+    background-color: #ca59d8;
+}
+
+.block.no-task {
+    border: 1px solid blue( "medium-muted" );
+    background-color: transparent;
+    color: blue( "medium-muted" );
+}
+
+.block-tab {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 0;
+    background-color: blue( "light" );
+    color: blue( "light" );
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    width: 30px;
+
+    transition: all .2s ease;
+
+    i {
+        margin: 0;
+    }
+
+    &:hover i {
+        color: blue( "dark" );
+    }
+
+    @include make-button(true);
+}
+
+.block:hover .block-tab {
+    height: 30px;
+    top: -31px;
+    color: blue( "medium-muted" );
+}
+
+
+.modal-toolbar {
+    float: right;
+    margin-right: 30px;
+}
+
+// Item modal form styling
+
+.form.icon-form {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.icon-form input {
+    flex: 2;
+    align-self: center;
+}
+
+.icon-form button {
+    width: 100%;
+    background-color: transparent;
+}
+
+.icon-form .picker-toggle {
+    margin-top: 0 !important;
+}
+
+.icon-form .date-picker-field {
+    width: 100%;
+}
+
+.icon-form .inline-label {
+    color: inherit;
+}
+
+.icon-form .repeat-picker {
+    right: 0;
+    bottom: 20px;
+}
+
+.icon-form button {
+    margin-top: 30px;
+}
+
+// ----- CIRCLES
+
+.circle-container {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.circle {
+    background-color: blue( "light-contrast" );
+    color: blue( "medium-muted" );
+    width: 150px;
+    height: 150px;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.circle-body {
+    font-size: 25px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+// BUTTON ROWS and icon buttons
+
+.button-row {
+    width: 100%;
+    margin: 15px 0;
+}
+
+.icon-button {
+    display: inline-block;
+    color: blue( "medium-muted" );
+
+    @include make-button(true);
+}
+
+.icon-button.labeled i {
+    margin-right: 10px;
+}
+
+// MULTIPLIER
+
+.repeat-type-container {
+    flex-wrap: wrap;
+    flex-direction: row;
+    max-width: 330px;
+}
+
+.multiplier {
+    flex: 1 100%;
+    text-align: center;
+}
+
+.multiplier i {
+    display: inline-block;
+    font-size: 25px;
+    color: #ddebff;
+    vertical-align: middle;
+    margin-right: 15px;
+}
+
+.multiplier input {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    max-width: 50px;
+    font-size: 25px;
+    vertical-align: middle;
+    color: #6f7184;
+    font-weight: bold;
+}
+
+// Planner
+
+.planner-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.planner-header .icon-button {
+    font-size: 25px;
+    color: gray( "medium-muted" );
+    transition: .2s all ease;
+
+    &:hover {
+        color: blue( "medium-muted" );
+    }
+}
+
+.planner-day {
+    color: blue( "medium-muted" );
+    font-weight: bold;
+    font-size: 25px;
+}
+
+.week-container {
+    margin-bottom: 20px;
+    display: flex;
+}
+
+.day-container {
+    width: calc(100%/7);
+    padding: 20px;
+    border: 1px solid #ddebff;
+    border-right: none;
+    justify-content: center;
+    align-items: center;
+
+    &.today {
+        background-color: #ddebff;
+    }
+}
+
+.day-container.today .day-label {
+    color: blue( "medium-muted" );
+}
+
+.day-container:first-child {
+    border-left: none;
+}
+
+.day-label {
+    text-align: center;
+    color: #707283;
+    font-size: 15px;
+}
+
+.planner-header {
+    padding-bottom: 20px;
+}
+
+.task-dots {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.task-dot {
+    width: 7px;
+    height: 7px;
+    background-color: blue( "medium-muted" );
+    border-radius: 100%;
+    display: inline-block;
+    margin: 0 2px;
+}
+
+.section-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.section-row section {
+    width: 50%;
+}
+
+.section-row section:last-child {
+    padding-left: 20px;
+    border-left: 1px solid #ddebff;
 }

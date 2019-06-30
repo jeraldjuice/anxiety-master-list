@@ -13,7 +13,7 @@ const CardOverlay = ( { deleteNote, closeOverlay } ) => {
                     Are you sure you want to delete?
                 </div>
                 <div className="card-overlay-toolbar">
-                    <button onClick={ deleteNote } className="danger">I'm sure</button>
+                    <button onClick={ deleteNote } className="danger">{ 'I\'m sure' }</button>
                     <button onClick={ closeOverlay } className="outline">Cancel</button>
                 </div>
             </div>
@@ -25,20 +25,20 @@ const NoteCard = ( { note, showOverlay, toggleOverlay, deleteNote } ) => {
     const toolbarButtons = [
         {
             icon: { icon: 'folder-open', solid: true },
-            onClick: () => false
+            onClick: () => false,
         },
         {
             icon: { icon: 'marker', solid: true },
-            onClick: () => false
+            onClick: () => false,
         },
         {
             icon: { icon: 'trash-alt', solid: true },
-            onClick: () => toggleOverlay()
+            onClick: () => toggleOverlay(),
         },
     ];
 
     return (
-        <Card className="note" icon={ { icon: 'sticky-note' } } toolbar={ toolbarButtons }>
+        <Card className="note" icon={ { icon: 'sticky-note' } } toolbar={ toolbarButtons } smallText>
             { showOverlay && <CardOverlay closeOverlay={ toggleOverlay } deleteNote={ () => deleteNote( note._id ) } /> }
             <CardBody>
                 { note.contents } 
@@ -60,7 +60,7 @@ const enhance = compose(
         deleteNote: ( { dispatch, toggleOverlay } ) => noteId => {
             dispatch( deleteById( noteId, 'notes' ) );
             toggleOverlay( false );
-        }
+        },
     })
 );
 

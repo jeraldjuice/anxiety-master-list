@@ -1,5 +1,5 @@
 import React from 'react';
-import { compose, lifecycle, } from 'recompose';
+import { compose, lifecycle } from 'recompose';
 import { connect } from 'react-redux';
 import { Page } from 'components/layout';
 import { Card, CardTitle, CardContainer, AddCard } from 'components/ui';
@@ -9,7 +9,7 @@ import { fetchData, createData } from 'actions/data';
 const NotesPage = ( { dispatch, notes = [], fetching } ) => {
     const fields = [
         { name: 'contents', type: 'textarea', placeholder: 'Whatcha thinking?' },
-        { name: 'Add', type: 'button', onClick: fields => dispatch( createData( fields , 'notes' ) ) }
+        { name: 'Add', type: 'button', onClick: fields => dispatch( createData( fields, 'notes' ) ) },
     ];
 
     return (
@@ -32,7 +32,7 @@ const NotesPage = ( { dispatch, notes = [], fetching } ) => {
 const mapStateToProps = ( { data: { notes, fetching } } ) => {
     return {
         notes,
-        fetching
+        fetching,
     };
 };
 
@@ -41,7 +41,7 @@ const enhance = compose(
     lifecycle({
         componentDidMount() {
             this.props.dispatch( fetchData( 'notes' ) );
-        }
+        },
     })
 );
 

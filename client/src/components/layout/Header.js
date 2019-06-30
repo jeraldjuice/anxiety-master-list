@@ -1,39 +1,34 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { appier } from 'utils';
 
 const navLinks = [
   {
     url: '/',
-    label: 'Dashboard'
+    label: 'Planner',
   },
   {
-    url: '/today/',
-    label: 'Today'
-  },
-  {
-    url: '/tasks/',
-    label: 'Tasks'
+    url: '/items/',
+    label: 'Items',
   },
   {
     url: '/categories/',
-    label: 'Categories'
+    label: 'Categories',
   },
   {
     url: '/notes/',
-    label: 'Notes'
+    label: 'Notes',
   },
   {
     url: '/settings/',
-    label: 'Settings'
+    label: 'Settings',
   },
 ];
 
-const Header = ({ match }) => {
+const Header = () => {
     return (
         <header className="container">
         <div id="title">
-          Anxiety Master List
+          Masterlist
         </div>
         <nav>
           <ul>

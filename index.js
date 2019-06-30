@@ -4,12 +4,13 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import notesRouter from './api/notes';
 import categoryRouter from './api/categories';
+import itemRouter from './api/items';
 
 const app = express();
 
 //Set up default mongoose connection
 var mongoDB = 'mongodb://localhost:27017/test';
-mongoose.connect(mongoDB, { useNewUrlParser: true });
+mongoose.connect(mongoDB, { useNewUrlParser: true, useFindAndModify: false });
 
 //Get the default connection
 var db = mongoose.connection;
@@ -25,6 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Endpoints
 app.use('/api/notes', notesRouter);
 app.use('/api/categories', categoryRouter);
+app.use('/api/items', itemRouter);
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname+'/client/build/index.html'));

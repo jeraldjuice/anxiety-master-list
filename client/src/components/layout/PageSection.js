@@ -1,5 +1,13 @@
 import React from 'react';
 
+export const PageRow = ({ children }) => {
+    return (
+        <div className="section-row">
+            { children }
+        </div>
+    );
+}
+
 const PageSection = ({ header, children }) => {
     return (
         <section>

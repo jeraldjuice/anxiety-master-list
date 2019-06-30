@@ -5,15 +5,15 @@ import { Page } from 'components/layout';
 import { Card, CardLink, CardTitle, CardIconCorner, CardStatus, CardContainer, AddCard } from 'components/ui';
 import { fetchData, createData } from 'actions/data';
 
-const CategoryPage = ( { categories = [], fetching, dispatch } ) => {
+const ItemsPage = ( { categories = [], fetching, dispatch } ) => {
     const fields = [
         { name: 'name', type: 'text', placeholder: 'Name' },
         { name: 'icon', type: 'text', placeholder: 'Icon' },
-        { name: 'Add', type: 'button', onClick: fields => dispatch( createData( fields, 'categories' ) ) },
+        { name: 'Add', type: 'button', onClick: fields => dispatch( createData( fields , 'categories' ) ) }
     ];
     
     return (
-        <Page id="main-content" header="Categories">
+        <Page id="main-content" header="Tasks">
             <CardContainer>
                 <AddCard fields={ fields } />
                 { fetching ? 
@@ -26,11 +26,11 @@ const CategoryPage = ( { categories = [], fetching, dispatch } ) => {
                         return (
                             <CardLink to={ `/categories/${ category._id }` } key={ category._id }>
                                 <CardTitle icon={ { iconString: category.icon } }>
-                                    { category.name }
+                                    {category.name}
                                 </CardTitle>
                                 <CardIconCorner icon={ { icon: 'thumbs-up' } } />
                                 <CardStatus>
-                                    NEXT TASK: Some task name
+                                    { '3' } tasks upcoming
                                 </CardStatus>
                             </CardLink>
                         );
@@ -53,8 +53,8 @@ const enhance = compose(
     lifecycle({
         componentDidMount() {
             this.props.dispatch( fetchData( 'categories' ) );
-        },
+        }
     })
 );
 
-export default enhance(CategoryPage);
+export default enhance( ItemsPage );
