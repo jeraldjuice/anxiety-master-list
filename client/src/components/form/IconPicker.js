@@ -1,12 +1,28 @@
-import React from 'react';
-import { withState, withHandlers, compose } from 'recompose';
+import React, { useState } from 'react';
 import { Icon } from 'components/ui';
 import { iconList } from 'utils';
 
 const iconCat = Object.keys( iconList );
 const allIcons = iconCat.reduce( ( acc, cat ) => [ ...acc, ...iconList[ cat ] ], [] );
 
-const IconPicker = ( { open, setOpen, value, generateIconButton, search, updateSearch, filteredItems } ) => {
+const IconPicker = ( { value, onChange } ) => {
+    const [ open, setOpen ] = useState( false );
+    const [ search, setSearch ] = useState( '' );
+
+    const updateSearch = term => setSearch( term.trim() );
+    const filteredItems = () => allIcons.filter( ico => ico.indexOf( search ) !== -1);
+
+    const generateIconButton = ( iconClass, idx ) => {
+        return (
+            <div key={ iconClass + idx } className="icon-btn" onClick={ () => {
+                onChange( iconClass );
+                setOpen( false );
+            } }>
+                <Icon iconString={ `fa-fw ${ iconClass }` } />
+            </div>
+        );
+    }
+
     return (
         <div className="icon-picker">
             <div className="picker-toggle" onClick={ () => setOpen( true ) }>
@@ -47,27 +63,4 @@ const IconPicker = ( { open, setOpen, value, generateIconButton, search, updateS
     );
 }
 
-const enhance = compose(
-    withState( 'open', 'setOpen', false ),
-    withState( 'search', 'setSearch', '' ),
-    withHandlers({
-        generateIconButton: ( { onChange, setOpen } ) => ( iconClass, idx ) => {
-            return (
-                <div key={ iconClass + idx } className="icon-btn" onClick={ () => {
-                    onChange( iconClass );
-                    setOpen( false );
-                } }>
-                    <Icon iconString={ `fa-fw ${ iconClass }` } />
-                </div>
-            );
-        },
-        updateSearch: ( { setSearch } ) => term => {
-            setSearch( term.trim() );
-        },
-        filteredItems: ( { search } ) => () => {
-            return allIcons.filter( ico => ico.indexOf( search ) !== -1);
-        },
-    })
-);
-
-export default enhance( IconPicker );
+export default IconPicker;

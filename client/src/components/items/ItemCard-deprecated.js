@@ -1,6 +1,5 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { compose, withState, withHandlers } from 'recompose';
 import { Card, CardBody, CardStatus, Icon, CardIconCorner } from 'components/ui';
 import Form from 'components/form/Form';
 import { updateItem } from 'actions/data';
@@ -103,13 +102,6 @@ const ItemCard = ( { item, showOverlay, toggleOverlay } ) => {
     );
 };
 
-const enhance = compose(
-    withState( 'showOverlay', 'toggleOverlay', false ),
-    withHandlers({
-        toggleOverlay: ( { showOverlay, toggleOverlay } ) => () => {
-            toggleOverlay( !showOverlay );
-        }
-    })
-);
+const enhance = component => component;
 
 export default enhance( ItemCard );

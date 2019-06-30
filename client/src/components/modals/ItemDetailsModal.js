@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
 import moment from 'moment';
-import { compose, withState, withHandlers } from 'recompose';
 import { useSelector, useDispatch } from 'react-redux';
 import { Modal, ModalHeader, ModalToolbar } from 'components/modals';
 import { Icon } from 'components/ui';
@@ -39,11 +38,28 @@ const generateTaskInfo = ( { status } ) => {
 
 // @TODO this needs to mark when it's due, if needed
 
-const ItemDetailsModal = ( { mode, setMode, renderView } ) => {
+const ItemDetailsModal = () => {
     const dispatch = useDispatch();
+    const [ mode, setMode ] = useState( 'view' );
 
     const itemId = useSelector( getModalData );
     const item = itemId && useSelector( getItem( itemId ) );
+
+    const editFields = [
+        { name: 'icon', type: 'iconPicker', placeholder: 'Item icon' },
+        { name: 'name', type: 'text', placeholder: 'Item name' },
+        { name: 'status', type: 'datePicker', removable: true, beginRemoved: true },
+        { name: 'Save', type: 'button', onClick: fields => {
+            dispatch( updateItem( fields, item._id ) );
+            setMode( 'view' );
+        }},
+    ];
+
+    const initValues = {
+        name: item.name,
+        icon: item.icon,
+        ...getInitValues( item ),
+    };
     
     return (
         <Modal closeModal={() => dispatch( clearModals() )}>
@@ -64,48 +80,19 @@ const ItemDetailsModal = ( { mode, setMode, renderView } ) => {
             <ModalHeader>
                 Item Details
             </ModalHeader>
-            { renderView() }
-        </Modal>
-    );
-};
-
-const enhance = compose(
-    withState( 'mode', 'setMode', 'view' ),
-    withHandlers({
-        renderView: ( { mode, item, dispatch, setMode } ) => () => {
-            const editFields = [
-                { name: 'icon', type: 'iconPicker', placeholder: 'Item icon' },
-                { name: 'name', type: 'text', placeholder: 'Item name' },
-                { name: 'status', type: 'datePicker', removable: true, beginRemoved: true },
-                { name: 'Save', type: 'button', onClick: fields => {
-                    dispatch( updateItem( fields, item._id ) );
-                    setMode( 'view' );
-                }},
-            ];
-
-            const initValues = {
-                name: item.name,
-                icon: item.icon,
-                ...getInitValues( item ),
-            };
-
-            switch( mode ) {
-                case 'edit':
-                    return (
-                        <Form className="icon-form" fields={ editFields } initValues={ initValues } />
-                    );
-                case 'view':
-                default:
-                    return <>
+            {
+                mode === 'edit' ? <Form className="icon-form" fields={ editFields } initValues={ initValues } />
+                :
+                    <>
                         <h1>
                             <Icon iconString={ item.icon } />
                             { item.name }
                         </h1>
                         { item && generateTaskInfo( item ) }
-                    </>;
+                    </>
             }
-        }
-    })
-);
+        </Modal>
+    );
+};
 
-export default enhance( ItemDetailsModal );
+export default ItemDetailsModal;

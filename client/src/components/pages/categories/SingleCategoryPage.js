@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import moment from 'moment';
-import { compose, lifecycle } from 'recompose';
 import { useSelector, useDispatch } from 'react-redux';
 import { Page, PageSection } from 'components/layout';
 import { CardContainer, AddCard } from 'components/ui';
@@ -10,8 +9,12 @@ import { getIsFetching, getCategory, getItemsByParent } from 'selectors/data';
 
 const SingleCategoryPage = ( { match } ) => {
     const categoryId = match.params.id;
-
     const dispatch = useDispatch();
+
+    useEffect( () => {
+        dispatch( fetchById( match.params.id, 'categories' ) );
+    } );
+
     const fetching = useSelector( getIsFetching );
     const category = useSelector( getCategory( categoryId ) );
     const items = useSelector( getItemsByParent( categoryId ) );
@@ -98,14 +101,5 @@ const SingleCategoryPage = ( { match } ) => {
     );
 };
 
-const enhance = compose(
-    lifecycle({
-        componentDidMount() {
-            const { match, dispatch } = this.props;
-            dispatch( fetchById( match.params.id, 'categories' ) );
-        },
-    }),
-);
-
-export default enhance( SingleCategoryPage );
+export default SingleCategoryPage;
 

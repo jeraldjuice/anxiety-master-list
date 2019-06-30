@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
 import moment from 'moment';
-import { withState, withHandlers, compose } from 'recompose';
 import { Icon, IconButton } from 'components/ui';
 import { itemUtils } from 'utils';
 import DropdownField from './DropdownField';
@@ -112,7 +111,38 @@ const RemovableButton = ( { onClick, removed } ) => {
     );
 };
 
-const DueDatePicker = ( { handleMultiplierChange, handleMonthChange, handleDateChange, handleRepeatChange, openDialog, setDialog, value, removable, removed, handleRemove } ) => {
+const DueDatePicker = ( { value, removable, onChange, beginRemoved, removeSelf } ) => {
+    const [ removed, setRemoved ] = useState( removable && beginRemoved && !value.hasOwnProperty( 'due' ) );
+    const [ openDialog, setDialog ] = useState( false );
+
+
+    const handleDateChange = due => {
+        onChange( { ...value, due } );
+        setDialog( false );
+    };
+
+    const handleMonthChange = due => {
+        onChange( { ...value, due } );
+    };
+
+    const handleRepeatChange = repeatEntity => {
+        onChange( { ...value, repeatEntity } );
+        setDialog( false );
+    };
+
+    const handleMultiplierChange = ( { target } ) => {
+        onChange( { ...value, multiplier: target.value } );
+    };
+
+    const handleRemove = () =>  {
+        if ( removed ) {
+            setRemoved( false );
+        } else {
+            removeSelf();
+            setRemoved( true );
+        }
+    };
+
     const due = value.hasOwnProperty( 'due' ) ? moment( value.due ) : moment();
     const repeatEntity = value.hasOwnProperty( 'repeatEntity' ) ? value.repeatEntity : 'none';
     const multiplier = value.hasOwnProperty( 'multiplier' ) ? value.multiplier : 1;
@@ -149,33 +179,4 @@ const DueDatePicker = ( { handleMultiplierChange, handleMonthChange, handleDateC
     </>;
 };
 
-const enhance = compose(
-    withState( 'removed', 'setRemoved', ( { removable, beginRemoved, value } ) => removable && beginRemoved && !value.hasOwnProperty( 'due' ) ),
-    withState( 'openDialog', 'setDialog', false ),
-    withHandlers({
-        handleDateChange: ( { onChange, value, setDialog } ) => due => {
-            onChange( { ...value, due } );
-            setDialog( false );
-        },
-        handleMonthChange: ( { onChange, value } ) => due => {
-            onChange( { ...value, due } );
-        },
-        handleRepeatChange: ( { onChange, value, setDialog } ) => repeatEntity => {
-            onChange( { ...value, repeatEntity } );
-            setDialog( false );
-        },
-        handleMultiplierChange: ( { onChange, value } ) => ( { target } ) => {
-            onChange( { ...value, multiplier: target.value } );
-        },
-        handleRemove: ( { removed, setRemoved, removeSelf } ) => () =>  {
-            if ( removed ) {
-                setRemoved( false );
-            } else {
-                removeSelf();
-                setRemoved( true );
-            }
-        },
-    })
-);
-
-export default enhance( DueDatePicker );
+export default DueDatePicker;

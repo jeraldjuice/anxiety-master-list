@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { compose, withState, withHandlers } from 'recompose';
 import moment from 'moment';
 import { Card, CardBody, CardStatus } from 'components/ui';
 import { deleteById } from 'actions/data';
@@ -21,7 +20,15 @@ const CardOverlay = ( { deleteNote, closeOverlay } ) => {
     );
 }
 
-const NoteCard = ( { note, showOverlay, toggleOverlay, deleteNote } ) => {
+const NoteCard = ( { note } ) => {
+    const dispatch = useDispatch();
+    const [ showOverlay, toggleOverlay ] = useState( false );
+
+    const deleteNote = () => {
+        dispatch( deleteById( note._id, 'notes' ) );
+        toggleOverlay( false );
+    };
+
     const toolbarButtons = [
         {
             icon: { icon: 'folder-open', solid: true },
@@ -33,13 +40,13 @@ const NoteCard = ( { note, showOverlay, toggleOverlay, deleteNote } ) => {
         },
         {
             icon: { icon: 'trash-alt', solid: true },
-            onClick: () => toggleOverlay(),
+            onClick: () => toggleOverlay( true ),
         },
     ];
 
     return (
         <Card className="note" icon={ { icon: 'sticky-note' } } toolbar={ toolbarButtons } smallText>
-            { showOverlay && <CardOverlay closeOverlay={ toggleOverlay } deleteNote={ () => deleteNote( note._id ) } /> }
+            { showOverlay && <CardOverlay closeOverlay={ () => toggleOverlay( false ) } deleteNote={ deleteNote } /> }
             <CardBody>
                 { note.contents } 
             </CardBody>
@@ -50,18 +57,4 @@ const NoteCard = ( { note, showOverlay, toggleOverlay, deleteNote } ) => {
     );
 };
 
-const enhance = compose(
-    withState( 'showOverlay', 'toggleOverlay', false ),
-    withHandlers({
-        toggleOverlay: ( { showOverlay, toggleOverlay } ) => () => {
-            toggleOverlay( !showOverlay );
-        },
-        deleteNote: ( { dispatch, toggleOverlay } ) => noteId => {
-            const dispatch = useDispatch();
-            dispatch( deleteById( noteId, 'notes' ) );
-            toggleOverlay( false );
-        },
-    })
-);
-
-export default enhance( NoteCard );
+export default NoteCard;

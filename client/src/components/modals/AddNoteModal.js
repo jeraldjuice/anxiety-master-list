@@ -1,12 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal, ModalHeader } from 'components/modals';
 import { useDispatch } from 'react-redux';
 import { clearModals } from 'actions/ui';
 import { createData } from 'actions/data';
-import { compose, withState, withHandlers } from 'recompose';
 
-const AddNoteModal = ( { handleField, noteContent, submitForm } ) => {
+const AddNoteModal = ( ) => {
     const dispatch = useDispatch();
+    const [ noteContent, setContents ] = useState( '' );
+
+    const handleField = ( { target: { value } } ) => setContents( value );
+
+    const submitForm = () => {
+        dispatch( createData( { contents: noteContent }, 'notes' ) );
+        dispatch( clearModals() );
+    };
+
     return (
         <Modal closeModal={() => dispatch( clearModals() )}>
             <ModalHeader>
@@ -20,15 +28,4 @@ const AddNoteModal = ( { handleField, noteContent, submitForm } ) => {
     );
 };
 
-const enhance = compose(
-    withState( 'noteContent', 'setContents', '' ),
-    withHandlers({
-        submitForm: ( { noteContent, dispatch } ) => () => {
-            dispatch( createData( { contents: noteContent }, 'notes' ) );
-            dispatch( clearModals() );
-        },
-        handleField: ( { setContents } ) => ( { target: { value } } ) => setContents( value ),
-    })
-);
-
-export default enhance(AddNoteModal);
+export default AddNoteModal;
