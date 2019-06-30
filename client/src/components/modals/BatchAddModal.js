@@ -1,9 +1,10 @@
 import React from 'react';
 import { Modal, ModalHeader } from 'components/modals';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { clearModals } from 'actions/ui';
 
-const BatchAddModal = ( { dispatch } ) => {
+const BatchAddModal = () => {
+    const dispatch = useDispatch();
     return (
         <Modal closeModal={() => dispatch(clearModals())}>
             <ModalHeader>
@@ -20,4 +21,4 @@ const BatchAddModal = ( { dispatch } ) => {
     );
 };
 
-export default connect()(BatchAddModal);
+export default BatchAddModal;

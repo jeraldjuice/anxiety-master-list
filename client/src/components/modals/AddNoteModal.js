@@ -1,13 +1,14 @@
 import React from 'react';
 import { Modal, ModalHeader } from 'components/modals';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { clearModals } from 'actions/ui';
 import { createData } from 'actions/data';
 import { compose, withState, withHandlers } from 'recompose';
 
-const AddNoteModal = ( { dispatch, handleField, noteContent, submitForm } ) => {
+const AddNoteModal = ( { handleField, noteContent, submitForm } ) => {
+    const dispatch = useDispatch();
     return (
-        <Modal closeModal={() => dispatch(clearModals())}>
+        <Modal closeModal={() => dispatch( clearModals() )}>
             <ModalHeader>
               Add a new note
             </ModalHeader>
@@ -20,7 +21,6 @@ const AddNoteModal = ( { dispatch, handleField, noteContent, submitForm } ) => {
 };
 
 const enhance = compose(
-    connect(),
     withState( 'noteContent', 'setContents', '' ),
     withHandlers({
         submitForm: ( { noteContent, dispatch } ) => () => {

@@ -1,12 +1,14 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Icon } from 'components/ui';
 import classNames from 'classnames';
 import { markComplete } from 'actions/data';
 import { itemUtils } from 'utils';
 import ItemStatusLine from './ItemStatusLine';
 
-const ItemBlock = ( { item, onClick, dispatch } ) => {
+const ItemBlock = ( { item, onClick } ) => {
+    const dispatch = useDispatch();
+    
     if ( !!item.status.due ) {
         const dueDateClass = itemUtils.dueDateClass( item );
         return (
@@ -36,4 +38,4 @@ const ItemBlock = ( { item, onClick, dispatch } ) => {
     );
 };
 
-export default connect()( ItemBlock );
+export default ItemBlock;

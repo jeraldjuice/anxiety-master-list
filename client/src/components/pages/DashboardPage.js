@@ -2,11 +2,12 @@ import React from 'react';
 import classNames from 'classnames';
 import moment from 'moment';
 import { compose, lifecycle } from 'recompose';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Page, PageSection, PageRow } from 'components/layout';
 import { CardContainer, IconButton } from 'components/ui';
 import ItemsSection from 'components/pages/sections/ItemsSection';
 import { fetchAll } from 'actions/data';
+import { getIsFetching, getAllCategories, getAllItems } from 'selectors/data';
 
 const days = [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ];
 
@@ -49,7 +50,11 @@ const ThisWeek = ( { items } ) => {
     );
 };
 
-const DashboardPage = ( { categories, items } ) => {
+const DashboardPage = () => {
+    const fetching = useSelector( getIsFetching );
+    const categories = useSelector( getAllCategories );
+    const items = useSelector( getAllItems );
+
     return (
         <Page id="main-content" noHeader>
             <div className="planner-header">
@@ -73,19 +78,10 @@ const DashboardPage = ( { categories, items } ) => {
     );
 };
 
-const mapStateToProps = ( { data: { categories, items, fetching } } ) => {
-    return {
-        fetching,
-        categories,
-        items,
-    };
-};
-
 const enhance = compose(
-    connect( mapStateToProps ),
     lifecycle({
         componentDidMount() {
-            const { dispatch } = this.props;
+            const { dispatch } = useDispatch();
             dispatch( fetchAll() );
         },
     }),

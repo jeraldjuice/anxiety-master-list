@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { compose, withState, withHandlers } from 'recompose';
 import moment from 'moment';
 import { Card, CardBody, CardStatus } from 'components/ui';
@@ -51,13 +51,13 @@ const NoteCard = ( { note, showOverlay, toggleOverlay, deleteNote } ) => {
 };
 
 const enhance = compose(
-    connect(),
     withState( 'showOverlay', 'toggleOverlay', false ),
     withHandlers({
         toggleOverlay: ( { showOverlay, toggleOverlay } ) => () => {
             toggleOverlay( !showOverlay );
         },
         deleteNote: ( { dispatch, toggleOverlay } ) => noteId => {
+            const dispatch = useDispatch();
             dispatch( deleteById( noteId, 'notes' ) );
             toggleOverlay( false );
         },

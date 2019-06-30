@@ -1,11 +1,16 @@
 import React from 'react';
 import { compose, lifecycle } from 'recompose';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Page } from 'components/layout';
 import { Card, CardLink, CardTitle, CardIconCorner, CardStatus, CardContainer, AddCard } from 'components/ui';
 import { fetchData, createData } from 'actions/data';
+import { getIsFetching, getAllCategories } from 'selectors/data';
 
-const CategoryPage = ( { categories = [], fetching, dispatch } ) => {
+const CategoryPage = () => {
+    const dispatch = useDispatch();
+    const fetching = useSelector( getIsFetching );
+    const categories = useSelector( getAllCategories );
+
     const fields = [
         { name: 'name', type: 'text', placeholder: 'Name' },
         { name: 'icon', type: 'text', placeholder: 'Icon' },
@@ -41,18 +46,12 @@ const CategoryPage = ( { categories = [], fetching, dispatch } ) => {
     );
 };
 
-const mapStateToProps = ( { data: { categories, fetching } } ) => {
-    return {
-        categories,
-        fetching,
-    };
-};
-
 const enhance = compose(
-    connect( mapStateToProps ),
     lifecycle({
         componentDidMount() {
-            this.props.dispatch( fetchData( 'categories' ) );
+            const dispatch = useDispatch();
+
+            dispatch( fetchData( 'categories' ) );
         },
     })
 );

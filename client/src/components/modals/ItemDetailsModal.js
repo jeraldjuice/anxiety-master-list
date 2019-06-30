@@ -1,13 +1,15 @@
 import React from 'react';
 import moment from 'moment';
-import { Modal, ModalHeader, ModalToolbar } from 'components/modals';
-import { connect } from 'react-redux';
-import { clearModals } from 'actions/ui';
-import { Icon } from 'components/ui';
 import { compose, withState, withHandlers } from 'recompose';
-import { updateItem } from 'actions/data';
+import { useSelector, useDispatch } from 'react-redux';
+import { Modal, ModalHeader, ModalToolbar } from 'components/modals';
+import { Icon } from 'components/ui';
 import Form from 'components/form/Form';
+import { clearModals } from 'actions/ui';
+import { updateItem } from 'actions/data';
 import { itemUtils } from 'utils';
+import { getModalData } from 'selectors/ui';
+import { getItem } from 'selectors/data';
 
 const getInitValues = task => {
     if ( !task || !task.status.due ) {
@@ -37,7 +39,11 @@ const generateTaskInfo = ( { status } ) => {
 
 // @TODO this needs to mark when it's due, if needed
 
-const ItemDetailsModal = ( { dispatch, mode, setMode, renderView } ) => {
+const ItemDetailsModal = ( { mode, setMode, renderView } ) => {
+    const dispatch = useDispatch();
+
+    const itemId = useSelector( getModalData );
+    const item = itemId && useSelector( getItem( itemId ) );
     
     return (
         <Modal closeModal={() => dispatch( clearModals() )}>
@@ -63,14 +69,7 @@ const ItemDetailsModal = ( { dispatch, mode, setMode, renderView } ) => {
     );
 };
 
-const mapStateToProps = ( { ui: { modalData: itemId }, data: { items } } ) => {
-    return { 
-        item: items.find( i => i._id === itemId ),
-    } 
-};
-
 const enhance = compose(
-    connect( mapStateToProps ),
     withState( 'mode', 'setMode', 'view' ),
     withHandlers({
         renderView: ( { mode, item, dispatch, setMode } ) => () => {

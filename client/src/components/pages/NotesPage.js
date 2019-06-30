@@ -1,12 +1,17 @@
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { compose, lifecycle } from 'recompose';
-import { connect } from 'react-redux';
 import { Page } from 'components/layout';
 import { Card, CardTitle, CardContainer, AddCard } from 'components/ui';
 import NoteCard from 'components/notes/NoteCard';
 import { fetchData, createData } from 'actions/data';
+import { getAllNotes, getIsFetching } from 'selectors/data';
 
-const NotesPage = ( { dispatch, notes = [], fetching } ) => {
+const NotesPage = () => {
+    const dispatch = useDispatch();
+    const notes = useSelector( getAllNotes );
+    const fetching = useSelector( getIsFetching );
+
     const fields = [
         { name: 'contents', type: 'textarea', placeholder: 'Whatcha thinking?' },
         { name: 'Add', type: 'button', onClick: fields => dispatch( createData( fields, 'notes' ) ) },
@@ -29,18 +34,12 @@ const NotesPage = ( { dispatch, notes = [], fetching } ) => {
     );
 };
 
-const mapStateToProps = ( { data: { notes, fetching } } ) => {
-    return {
-        notes,
-        fetching,
-    };
-};
-
 const enhance = compose(
-    connect( mapStateToProps ),
     lifecycle({
         componentDidMount() {
-            this.props.dispatch( fetchData( 'notes' ) );
+            const dispatch = useDispatch();
+            
+            dispatch( fetchData( 'notes' ) );
         },
     })
 );

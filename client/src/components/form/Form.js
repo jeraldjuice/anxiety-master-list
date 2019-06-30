@@ -1,10 +1,11 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { withState, withHandlers, compose } from 'recompose';
 import classNames from 'classnames';
 import DropdownField from './DropdownField';
 import DueDatePicker from './DueDatePicker';
 import IconPicker from './IconPicker';
+
+// @TODO this might need dispatch? Unsure
 
 const FormButton = ( { onClick, name, sm, invert, ...additional } ) => {
     return (
@@ -54,7 +55,6 @@ const Form = ( { className, fields, getFieldValue, removeFieldValue, handleField
 };
 
 const enhance = compose(
-    connect(),
     withState( 'formFields', 'setFormFields', ( { initValues = {} } ) => initValues ),
     withState( 'dirty', 'setDirty', false ),
     withHandlers({
