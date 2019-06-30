@@ -7,7 +7,7 @@ const appier = {
             body: JSON.stringify(data),
             headers:{
                 'Content-Type': 'application/json'
-            }
+            },
         }).then(res => res.json())
         .catch(onError);
     },

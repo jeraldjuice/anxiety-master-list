@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import { Icon } from 'components/ui';
 
 const optional = (prop, key) => {
@@ -9,17 +10,21 @@ const optional = (prop, key) => {
     return prop ? { [ key ]: prop } : {};
 }
 
-const Page = ({ children, header, id, icon = false }) => {
+const Page = ({ children, header, id, bigHeader = false, icon = false }) => {
     const optionalProperties = {
-        ...optional(id, 'id')
+        ...optional(id, 'id'),
     };
 
     return (
         <div className="content-container" { ...optionalProperties }>
-            <div className="page-header">
-                { icon && <Icon { ...icon } /> }
-                { header }
-            </div>
+            {
+                !!header && (
+                    <div className={ classNames( 'page-header', { big: !!bigHeader } ) }>
+                        { icon && <Icon { ...icon } /> }
+                        { header }
+                    </div>
+                )
+            }
             { children }
         </div>
     );

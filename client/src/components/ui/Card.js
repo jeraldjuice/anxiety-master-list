@@ -1,9 +1,11 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import classNames from  'classnames';
 import { Icon } from 'components/ui';
 
 export const CardTitle = ({ children, icon = false }) => {
     return (
-        <div className="category-title">
+        <div className="card-title">
             { icon && <Icon { ...icon } /> }
             { children }
         </div>
@@ -66,11 +68,19 @@ export const CardContainer = ({ children }) => {
     );
 }
 
-const Card = ({ children, icon = false, className = '', toolbar = false, withHover = false }) => {
+export const CardLink = ( { to, ...props } ) => {
     return (
-        <div className={ `card${withHover ? ' with-hover' : ''}` + ( className.length > 0 ? ' ' : '' ) + className }>
+        <Link className="card with-hover" to={ to }>
+            <Card removeCardClass { ...props } />
+        </Link>
+    );
+};
+
+const Card = ({ children, icon, className, toolbar, withHover, removeCardClass, smallText }) => {
+    return (
+        <div className={ classNames( { card: !removeCardClass, 'with-hover': withHover, 'top-icon-card': icon, className, 'small-text': smallText } ) }>
             { toolbar && <CardToolbar buttons={ toolbar } /> }
-            { icon && <Icon { ...icon } /> }
+            { icon && <Icon className="top-icon" { ...icon } /> }
             { children }
         </div>
     );

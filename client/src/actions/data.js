@@ -13,7 +13,7 @@ export const RECEIVE_DATA = 'DATA.RECEIVE';
 export function receiveData( data ) {
     return {
         type: RECEIVE_DATA,
-        data
+        data,
     };
 }
 
@@ -23,12 +23,17 @@ export function fetchData( dataType ) {
 
         return appier
             .get( dataType )
-            .then( data =>  
-                dispatch({
-                    type: RECEIVE_DATA,
-                    data: { [ dataType ] : data }
-                })
-            );
+            .then( data => dispatch( receiveData( data ) ) );
+    }
+}
+
+export function fetchAll() {
+    return dispatch => {
+        dispatch( startFetch() );
+
+        return appier
+            .get( 'categories/all' )
+            .then( data => dispatch( receiveData( data ) ) );
     }
 }
 
@@ -38,15 +43,51 @@ export function receiveOne( data, dataType ) {
     return {
         type: RECEIVE_ONE,
         data,
-        dataType
+        dataType,
     };
+}
+
+export const UPDATE_ONE = 'DATA.UPDATE_ONE';
+
+export function updateOne( data, dataType ) {
+    return {
+        type: UPDATE_ONE,
+        data,
+        dataType,
+    };
+}
+
+export function fetchById( id, dataType ) {
+    return dispatch => {
+        dispatch( startFetch() );
+
+        return appier
+            .get( `${ dataType }/${ id }` )
+            .then( data => dispatch( receiveData( data ) ) );
+    }
 }
 
 export function createData( properties, dataType ) {
     return dispatch => {
         return appier
             .post( `${ dataType }/new`, properties )
-            .then( data => dispatch( receiveOne( data, dataType ) ) );
+            .then( data => dispatch( receiveData( data ) ) );
+    }
+}
+
+export function updateItem( properties, itemId ) {
+    return dispatch => {
+        return appier
+            .post( `items/${ itemId }`, properties )
+            .then( data => dispatch( receiveData( data ) ) );
+    }
+}
+
+export function markComplete( itemId ) {
+    return dispatch => {
+        return appier
+            .post( `items/${ itemId }`, { status: 'completed' } )
+            .then( data => dispatch( receiveData( data ) ) );
     }
 }
 
@@ -60,7 +101,7 @@ export function deleteById( id, dataType ) {
                 dispatch({
                     type: DELETE_BY_ID,
                     id,
-                    dataType
+                    dataType,
                 })
             );
     }

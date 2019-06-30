@@ -17,6 +17,14 @@ export const ModalFooter = ({ children }) => {
     );
 };
 
+export const ModalToolbar = ({ children }) => {
+    return (
+        <div className="modal-toolbar">
+            { children }
+        </div>
+    );
+};
+
 const CloseButton = ({ closeModal }) => {
     return (
         <div className="close-btn" onClick={ closeModal }>

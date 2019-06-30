@@ -1,9 +1,10 @@
-import Modal, { ModalFooter, ModalHeader } from './Modal';
+import Modal, { ModalFooter, ModalHeader, ModalToolbar } from './Modal';
 import ModalHandler from './ModalHandler';
 
 export {
     Modal,
     ModalHeader,
     ModalFooter,
-    ModalHandler
+    ModalHandler,
+    ModalToolbar,
 };

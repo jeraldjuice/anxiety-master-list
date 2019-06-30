@@ -6,7 +6,7 @@ const notesRouter = express.Router();
 notesRouter
     .get('/', (req,res) => {
         Note.find({}).sort({created: 'desc'}).exec((err, notes) => {
-            res.json(notes)
+            res.json( { notes } )
         });
     })
 
@@ -14,7 +14,7 @@ notesRouter.route('/new')
     .post((req, res) => {
         const note = new Note(req.body);
         note.save();
-        res.status(201).send(note);
+        res.status(201).send( { notes: [ note ] } );
     })
 
 notesRouter.route('/delete')

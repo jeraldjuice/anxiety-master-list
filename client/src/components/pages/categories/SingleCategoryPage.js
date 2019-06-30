@@ -1,135 +1,114 @@
 import React from 'react';
-import { Page, PageSection } from 'components/layout';
-import { Icon } from 'components/ui';
 import moment from 'moment';
+import { compose, lifecycle } from 'recompose';
+import { connect } from 'react-redux';
+import { Page, PageSection } from 'components/layout';
+import { CardContainer, AddCard } from 'components/ui';
+import { fetchById, createData } from 'actions/data';
+import ItemsSection from 'components/pages/sections/ItemsSection';
+import withItems from 'components/hoc/withItems';
 
-let id = 4;
-
-const category = {
-    id: 1,
-    name: 'Money',
-    iconType: {
-        icon: 'credit-card',
-    },
-    status: 'okay',
-    upcoming: {
-        nextWeek: 3
+const SingleCategoryPage = ( { category, items, fetching, dispatch } ) => {
+    if ( fetching ) {
+        return <Page id="main-content" header="Loading..." icon={ { icon: 'spinner', solid: true } } />;
     }
-};
 
-const Card = ({ children }) => {
-    return (
-        <div className="card">
-            { children }
-        </div>
-    );
-}
+    if ( ! category ) {
+        return 'Error';
+    }
 
-const newItem = (name, cat) => {
-    return {
-        name,
-        id: id++,
-        cat
-    };
-};
+    const fields = [
+        { name: 'name', type: 'text', placeholder: 'Name' },
+        { name: 'icon', type: 'iconPicker', placeholder: 'Icon' },
+        { name: 'Add', type: 'button', onClick: fields => dispatch( createData( { ...fields, category: category._id }, 'items' ) ) },
+    ];
 
-const items = [
-    newItem('Dental Health', 2)
-];
+    const dueWhen = items.reduce( ( acc, t ) => {
+        const dayDiff = moment( t.status.due ).diff( moment(), 'days' );
 
-const getItem = id => items.find( item => item.id === id );
-
-const conditionTypes = {
-    date: 'date',
-    monthly: 'monthly',
-    weekly: 'weekly',
-    yearly: 'yearly',
-};
-
-const newDueCondition = {
-    [conditionTypes.date]: date => {
-        return {
-            date
-        };
-    },
-    [conditionTypes.monthly]: (dayOfMonth, multiplier = 1) => {
-        return {
-            dayOfMonth,
-            multiplier
-        };
-    },
-    [conditionTypes.weekly]: (dayOfWeek, multiplier = 1) => {
-        return {
-            dayOfWeek,
-            multiplier
-        };
-    },
-    [conditionTypes.yearly]: (dayOfMonth, monthNumber, multiplier = 1) => {
-        return {
-            dayOfMonth,
-            monthNumber,
-            multiplier
-        };
-    },
-};
-
-const newTask = (name, item, type, condition) => {
-    return {
-        id: id++,
-        name,
-        parent: item,
-        due: {
-            type,
-            condition
+        if ( dayDiff <=1 ) {
+            return {
+                ...acc,
+                today: acc.today + 1,
+            }
         }
-    };
-}
 
-const tasks = [
-    newTask('Make regular dental checkup', 4, conditionTypes.date, newDueCondition.date(moment()))
-];
+        if ( dayDiff <=7 ) {
+            return {
+                ...acc,
+                thisWeek: acc.thisWeek + 1,
+            }
+        }
 
-const CategoryPage = ({ match }) => {
+        if ( dayDiff <=14 ) {
+            return {
+                ...acc,
+                nextWeek: acc.nextWeek + 1,
+            }
+        }
+
+        return acc;
+        
+    }, { today: 0, thisWeek: 0, nextWeek: 0 } );
+
     return (
-        <Page id="main-content" header={category.name} icon={ category.iconType }>
+        <Page id="main-content" header={ category.name } icon={ { iconString: category.icon } } bigHeader>
             <PageSection>
-                <div className="category-info">
-                    <div className="row">
-                        <div className="cell cell-stacked">
-                            <div className="stacked-header">Status</div>
-                            <div className="stacked">Okay!</div>
+                <div className="circle-container">
+                    <div className="circle today">
+                        <div className="circle-header">
+                            Today
                         </div>
-                        <div className="cell cell-stacked">
-                            <div className="stacked-header">Items</div>
-                            <div className="stacked">{ items.length }</div>
+                        <div className="circle-body">
+                            { dueWhen.today }
                         </div>
                     </div>
-                    <div className="row">
-                        <div className="cell">
-                            <span className="inline-header">Upcoming Tasks</span>
-                            <div className="upcoming-container">
-                                <div className="row">
-                                    <div className="cell">
-                                        Today: 0
-                                    </div>
-                                    <div className="cell">
-                                        This Week: 1
-                                    </div>
-                                    <div className="cell">
-                                        Next Week: 1
-                                    </div>
-                                </div>
-                            </div>
+                    <div className="circle this-week">
+                        <div className="circle-header">
+                            This Week
+                        </div>
+                        <div className="circle-body">
+                            { dueWhen.thisWeek }
+                        </div>
+                    </div>
+                    <div className="circle">
+                        <div className="circle-header">
+                            Next Week
+                        </div>
+                        <div className="circle-body">
+                            { dueWhen.nextWeek }
                         </div>
                     </div>
                 </div>
             </PageSection>
-            <PageSection header="Items">
-                Hi
+            <ItemsSection categoryId={ category._id } />
+            <PageSection header="Add">
+                <CardContainer>
+                    <AddCard fields={ fields } />
+                </CardContainer>
             </PageSection>
         </Page>
     );
 };
 
-export default CategoryPage;
+const mapStateToProps = ( { data: { categories, fetching } }, { match } ) => {
+    const category = categories.find( cat => cat._id === match.params.id );
+    return {
+        category,
+        fetching,
+    };
+};
+
+const enhance = compose(
+    connect( mapStateToProps ),
+    lifecycle({
+        componentDidMount() {
+            const { match, dispatch } = this.props;
+            dispatch( fetchById( match.params.id, 'categories' ) );
+        },
+    }),
+    withItems
+);
+
+export default enhance( SingleCategoryPage );
 

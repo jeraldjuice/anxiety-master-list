@@ -4,7 +4,7 @@ import data from './data';
 
 const reducer = combineReducers({
     ui,
-    data
+    data,
 });
 
 export default reducer;
