@@ -13,7 +13,7 @@ const SingleCategoryPage = ( { match } ) => {
 
     useEffect( () => {
         dispatch( fetchById( match.params.id, 'categories' ) );
-    } );
+    }, [] );
 
     const fetching = useSelector( getIsFetching );
     const category = useSelector( getCategory( categoryId ) );

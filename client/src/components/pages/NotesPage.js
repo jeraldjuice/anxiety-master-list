@@ -13,7 +13,7 @@ const NotesPage = () => {
 
     useEffect( () => {
         dispatch( fetchData( 'notes' ) );
-    } );
+    }, [] );
 
     const fields = [
         { name: 'contents', type: 'textarea', placeholder: 'Whatcha thinking?' },
