@@ -12,7 +12,7 @@ const CategoryPage = () => {
 
     useEffect( () => {
         dispatch( fetchData( 'categories' ) );
-    } );
+    }, [] );
 
     const fields = [
         { name: 'name', type: 'text', placeholder: 'Name' },

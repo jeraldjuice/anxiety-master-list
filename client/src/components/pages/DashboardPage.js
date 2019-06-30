@@ -57,7 +57,7 @@ const DashboardPage = () => {
 
     useEffect( () => {
         dispatch( fetchAll() );
-    } );
+    }, [] );
 
     return (
         <Page id="main-content" noHeader>
