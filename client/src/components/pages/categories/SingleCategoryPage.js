@@ -1,14 +1,21 @@
 import React from 'react';
 import moment from 'moment';
 import { compose, lifecycle } from 'recompose';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Page, PageSection } from 'components/layout';
 import { CardContainer, AddCard } from 'components/ui';
 import { fetchById, createData } from 'actions/data';
 import ItemsSection from 'components/pages/sections/ItemsSection';
-import withItems from 'components/hoc/withItems';
+import { getIsFetching, getCategory, getItemsByParent } from 'selectors/data';
 
-const SingleCategoryPage = ( { category, items, fetching, dispatch } ) => {
+const SingleCategoryPage = ( { match } ) => {
+    const categoryId = match.params.id;
+
+    const dispatch = useDispatch();
+    const fetching = useSelector( getIsFetching );
+    const category = useSelector( getCategory( categoryId ) );
+    const items = useSelector( getItemsByParent( categoryId ) );
+
     if ( fetching ) {
         return <Page id="main-content" header="Loading..." icon={ { icon: 'spinner', solid: true } } />;
     }
@@ -91,23 +98,13 @@ const SingleCategoryPage = ( { category, items, fetching, dispatch } ) => {
     );
 };
 
-const mapStateToProps = ( { data: { categories, fetching } }, { match } ) => {
-    const category = categories.find( cat => cat._id === match.params.id );
-    return {
-        category,
-        fetching,
-    };
-};
-
 const enhance = compose(
-    connect( mapStateToProps ),
     lifecycle({
         componentDidMount() {
             const { match, dispatch } = this.props;
             dispatch( fetchById( match.params.id, 'categories' ) );
         },
     }),
-    withItems
 );
 
 export default enhance( SingleCategoryPage );

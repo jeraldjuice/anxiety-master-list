@@ -1,11 +1,14 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { getActiveModal } from 'selectors/ui';
 import BatchAddModal from './BatchAddModal';
 import AddNoteModal from './AddNoteModal';
 import ItemDetailsModal from './ItemDetailsModal';
-import { connect } from 'react-redux';
 import modalTypes from 'constants/modalTypes';
 
-const ModalHandler = ( { modal } ) => {
+const ModalHandler = () => {
+    const modal = useSelector( getActiveModal );
+
     switch( modal ) {
         case modalTypes.batchAdd:
             return <BatchAddModal />;
@@ -18,10 +21,4 @@ const ModalHandler = ( { modal } ) => {
     }
 };
 
-const mapStateToProps = ( { ui: { modal } } ) => {
-    return {
-        modal,
-    };
-};
-
-export default connect(mapStateToProps)(ModalHandler);
+export default ModalHandler;

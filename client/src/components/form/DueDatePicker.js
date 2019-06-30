@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import moment from 'moment';
 import { withState, withHandlers, compose } from 'recompose';
 import { Icon, IconButton } from 'components/ui';
@@ -151,7 +150,6 @@ const DueDatePicker = ( { handleMultiplierChange, handleMonthChange, handleDateC
 };
 
 const enhance = compose(
-    connect(),
     withState( 'removed', 'setRemoved', ( { removable, beginRemoved, value } ) => removable && beginRemoved && !value.hasOwnProperty( 'due' ) ),
     withState( 'openDialog', 'setDialog', false ),
     withHandlers({

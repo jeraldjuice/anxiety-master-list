@@ -1,15 +1,17 @@
 import React from 'react';
 import { Icon } from 'components/ui';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { openModal } from 'actions/ui';
 import modalTypes from 'constants/modalTypes';
 
-const AddButton = ( { dispatch } ) => {
+const AddButton = () => {
+    const dispatch = useDispatch();
+
     return (
         <div id="add-button" onClick={ () => dispatch(openModal(modalTypes.noteAdd)) }>
             <Icon icon="plus" solid />
         </div>
     );
-}
+};
 
-export default connect()(AddButton);
+export default AddButton;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { compose, withState, withHandlers } from 'recompose';
 import { Card, CardBody, CardStatus, Icon, CardIconCorner } from 'components/ui';
 import Form from 'components/form/Form';
@@ -71,7 +71,8 @@ const Status = ( { status, isExpired } ) => {
     return <CardIconCorner icon={ { iconString: statusIcons[ status.id ] } } />;
 };
 
-const ItemCard = ( { item, showOverlay, toggleOverlay, dispatch } ) => {
+const ItemCard = ( { item, showOverlay, toggleOverlay } ) => {
+    const dispatch = useDispatch();
     const isExpired = hasExpiredStatus( item.status );
 
     const toolbarButtons = [
@@ -103,7 +104,6 @@ const ItemCard = ( { item, showOverlay, toggleOverlay, dispatch } ) => {
 };
 
 const enhance = compose(
-    connect(),
     withState( 'showOverlay', 'toggleOverlay', false ),
     withHandlers({
         toggleOverlay: ( { showOverlay, toggleOverlay } ) => () => {

@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { withState, withHandlers, compose } from 'recompose';
 
 const DropdownField = ( { handleOptionClick, isOpen, setIsOpen, options, value } ) => {
@@ -42,7 +41,6 @@ const DropdownField = ( { handleOptionClick, isOpen, setIsOpen, options, value }
 };
 
 const enhance = compose(
-    connect(),
     withState( 'isOpen', 'setIsOpen', false ),
     withHandlers({
         handleOptionClick: ( { onChange, setIsOpen } ) => value => {

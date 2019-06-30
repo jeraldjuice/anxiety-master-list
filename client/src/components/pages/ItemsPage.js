@@ -1,19 +1,24 @@
 import React from 'react';
 import { compose, lifecycle } from 'recompose';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Page } from 'components/layout';
 import { Card, CardLink, CardTitle, CardIconCorner, CardStatus, CardContainer, AddCard } from 'components/ui';
 import { fetchData, createData } from 'actions/data';
+import { getIsFetching, getAllCategories } from 'selectors/data';
 
-const ItemsPage = ( { categories = [], fetching, dispatch } ) => {
+const CategoryPage = () => {
+    const dispatch = useDispatch();
+    const fetching = useSelector( getIsFetching );
+    const categories = useSelector( getAllCategories );
+
     const fields = [
         { name: 'name', type: 'text', placeholder: 'Name' },
         { name: 'icon', type: 'text', placeholder: 'Icon' },
-        { name: 'Add', type: 'button', onClick: fields => dispatch( createData( fields , 'categories' ) ) }
+        { name: 'Add', type: 'button', onClick: fields => dispatch( createData( fields, 'categories' ) ) },
     ];
     
     return (
-        <Page id="main-content" header="Tasks">
+        <Page id="main-content" header="Categories">
             <CardContainer>
                 <AddCard fields={ fields } />
                 { fetching ? 
@@ -26,11 +31,11 @@ const ItemsPage = ( { categories = [], fetching, dispatch } ) => {
                         return (
                             <CardLink to={ `/categories/${ category._id }` } key={ category._id }>
                                 <CardTitle icon={ { iconString: category.icon } }>
-                                    {category.name}
+                                    { category.name }
                                 </CardTitle>
                                 <CardIconCorner icon={ { icon: 'thumbs-up' } } />
                                 <CardStatus>
-                                    { '3' } tasks upcoming
+                                    NEXT TASK: Some task name
                                 </CardStatus>
                             </CardLink>
                         );
@@ -41,20 +46,13 @@ const ItemsPage = ( { categories = [], fetching, dispatch } ) => {
     );
 };
 
-const mapStateToProps = ( { data: { categories, fetching } } ) => {
-    return {
-        categories,
-        fetching,
-    };
-};
-
 const enhance = compose(
-    connect( mapStateToProps ),
     lifecycle({
         componentDidMount() {
-            this.props.dispatch( fetchData( 'categories' ) );
-        }
+            const dispatch = useDispatch();
+            dispatch( fetchData( 'categories' ) );
+        },
     })
 );
 
-export default enhance( ItemsPage );
+export default enhance(CategoryPage);
